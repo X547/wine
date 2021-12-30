@@ -28,6 +28,9 @@
 #include <sys/resource.h>
 #endif
 #include <unistd.h>
+#ifdef __HAIKU__
+#define SIGIO SIGPOLL
+#endif
 
 #include "file.h"
 #include "object.h"

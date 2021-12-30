@@ -64,6 +64,11 @@
 #ifdef __APPLE__
 # include <mach/mach.h>
 #endif
+#ifdef __HAIKU__
+# include <SupportDefs.h>
+extern status_t		_kern_generic_syscall(const char *subsystem, uint32 function,
+						void *buffer, size_t bufferSize);
+#endif
 
 #define NONAMELESSUNION
 #define NONAMELESSSTRUCT
@@ -232,6 +237,34 @@ __ASM_GLOBAL_FUNC( alloc_fs_sel,
 #define TRAP_sig(context)    ((context)->uc_mcontext->__es.__trapno)
 #define ERROR_sig(context)   ((context)->uc_mcontext->__es.__err)
 #define FPU_sig(context)     ((XMM_SAVE_AREA32 *)&(context)->uc_mcontext->__fs.__fpu_fcw)
+#define XState_sig(context)  NULL
+
+#elif defined (__HAIKU__)
+
+#define RAX_sig(context)     ((context)->uc_mcontext.rax)
+#define RBX_sig(context)     ((context)->uc_mcontext.rbx)
+#define RCX_sig(context)     ((context)->uc_mcontext.rcx)
+#define RDX_sig(context)     ((context)->uc_mcontext.rdx)
+#define RSI_sig(context)     ((context)->uc_mcontext.rsi)
+#define RDI_sig(context)     ((context)->uc_mcontext.rdi)
+#define RBP_sig(context)     ((context)->uc_mcontext.rbp)
+#define R8_sig(context)      ((context)->uc_mcontext.r8)
+#define R9_sig(context)      ((context)->uc_mcontext.r9)
+#define R10_sig(context)     ((context)->uc_mcontext.r10)
+#define R11_sig(context)     ((context)->uc_mcontext.r11)
+#define R12_sig(context)     ((context)->uc_mcontext.r12)
+#define R13_sig(context)     ((context)->uc_mcontext.r13)
+#define R14_sig(context)     ((context)->uc_mcontext.r14)
+#define R15_sig(context)     ((context)->uc_mcontext.r15)
+#define CS_sig(context)      NULL
+#define FS_sig(context)      NULL
+#define GS_sig(context)      NULL
+#define EFL_sig(context)     ((context)->uc_mcontext.rflags)
+#define RIP_sig(context)     ((context)->uc_mcontext.rip)
+#define RSP_sig(context)     ((context)->uc_mcontext.rsp)
+#define TRAP_sig(context)    TRAP_x86_PAGEFLT
+#define ERROR_sig(context)   0
+#define FPU_sig(context)     ((XMM_SAVE_AREA32 *)&(context)->uc_mcontext.fpu)
 #define XState_sig(context)  NULL
 
 #else
@@ -1547,10 +1580,12 @@ static inline void set_sigcontext( const CONTEXT *context, ucontext_t *sigcontex
     R14_sig(sigcontext) = context->R14;
     R15_sig(sigcontext) = context->R15;
     RIP_sig(sigcontext) = context->Rip;
+#ifndef __HAIKU__
     CS_sig(sigcontext)  = context->SegCs;
     FS_sig(sigcontext)  = context->SegFs;
     GS_sig(sigcontext)  = context->SegGs;
     EFL_sig(sigcontext) = context->EFlags;
+#endif
 #ifdef DS_sig
     DS_sig(sigcontext) = context->SegDs;
 #endif
@@ -2211,7 +2246,9 @@ static void setup_raise_exception( ucontext_t *sigcontext, EXCEPTION_RECORD *rec
         context_init_xstate( &stack->context, NULL );
     }
 
+#ifndef __HAIKU__
     CS_sig(sigcontext)  = cs64_sel;
+#endif
     RIP_sig(sigcontext) = (ULONG_PTR)pKiUserExceptionDispatcher;
     RSP_sig(sigcontext) = (ULONG_PTR)stack;
     /* clear single-step, direction, and align check flag */
@@ -2598,6 +2635,12 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
     EXCEPTION_RECORD rec = { 0 };
     struct xcontext context;
     ucontext_t *ucontext = sigcontext;
+    printf("segv_handler\n");
+    printf("  IP: %#" PRIx64 "\n", RIP_sig(ucontext));
+    printf("  SP: %#" PRIx64 "\n", RSP_sig(ucontext));
+    printf("  FP: %#" PRIx64 "\n", RBP_sig(ucontext));
+    printf("  address: %#" PRIx64 "\n", siginfo->si_addr);
+    _exit(1);
 
     rec.ExceptionAddress = (void *)RIP_sig(ucontext);
     save_context( &context, sigcontext );
@@ -2959,6 +3002,8 @@ void signal_init_thread( TEB *teb )
        thread's gsbase.  Have each thread record its gsbase pointer into its
        TEB so alloc_tls_slot() can find it. */
     teb->Reserved5[0] = amd64_thread_data()->pthread_teb;
+#elif defined (__HAIKU__)
+    _kern_generic_syscall("thread", /*THREAD_SET_GS_BASE*/ 1, teb, 0);
 #else
 # error Please define setting %gs for your architecture
 #endif

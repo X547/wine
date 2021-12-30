@@ -88,6 +88,9 @@
 #ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
 #endif
+#ifdef __HAIKU__
+#undef ioctl
+#endif
 
 #include "ntstatus.h"
 #define WIN32_NO_STATUS

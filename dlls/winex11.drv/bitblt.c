@@ -45,6 +45,7 @@
 #  include <sys/ipc.h>
 # endif
 #endif
+#undef HAVE_LIBXXSHM
 
 #include "windef.h"
 #include "winbase.h"

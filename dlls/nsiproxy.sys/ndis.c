@@ -256,6 +256,9 @@ static WCHAR *strdupAtoW( const char *str )
 
 static struct if_entry *add_entry( UINT index, char *name )
 {
+#ifdef __HAIKU__
+    return NULL;
+#else
     struct if_entry *entry;
     int name_len = strlen( name );
 
@@ -284,6 +287,7 @@ static struct if_entry *add_entry( UINT index, char *name )
 
     list_add_tail( &if_list, &entry->entry );
     return entry;
+#endif
 }
 
 static void update_if_table( void )
@@ -319,6 +323,7 @@ static void ifinfo_fill_dynamic( struct if_entry *entry, struct nsi_ndis_ifinfo_
     fd = socket( PF_INET, SOCK_DGRAM, 0 );
     if (fd == -1) return;
 
+#ifndef __HAIKU__
     if (!ioctl( fd, SIOCGIFFLAGS, &req ))
     {
         if (req.ifr_flags & IFF_UP) data->oper_status = IfOperStatusUp;
@@ -327,6 +332,7 @@ static void ifinfo_fill_dynamic( struct if_entry *entry, struct nsi_ndis_ifinfo_
 #endif
         else data->oper_status = IfOperStatusDown;
     } else data->oper_status = IfOperStatusUnknown;
+#endif
 
     data->flags.unk = 0;
     data->flags.not_media_conn = 0;
@@ -334,8 +340,12 @@ static void ifinfo_fill_dynamic( struct if_entry *entry, struct nsi_ndis_ifinfo_
     data->media_conn_state = MediaConnectStateConnected;
     data->unk = 0;
 
+#ifndef __HAIKU__
     if (!ioctl( fd, SIOCGIFMTU, &req )) data->mtu = req.ifr_mtu;
     else data->mtu = 0;
+#else
+    data->mtu = 0;
+#endif
 
     close( fd );
 

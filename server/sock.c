@@ -1586,7 +1586,9 @@ static int get_unix_protocol( int protocol )
         case WS_IPPROTO_ICMP: return IPPROTO_ICMP;
         case WS_IPPROTO_IGMP: return IPPROTO_IGMP;
         case WS_IPPROTO_IP: return IPPROTO_IP;
+#ifndef __HAIKU__
         case WS_IPPROTO_IPV4: return IPPROTO_IPIP;
+#endif
         case WS_IPPROTO_IPV6: return IPPROTO_IPV6;
         case WS_IPPROTO_RAW: return IPPROTO_RAW;
         case WS_IPPROTO_TCP: return IPPROTO_TCP;
@@ -2046,7 +2048,9 @@ static unsigned int sock_get_error( int err )
         case EPROTOTYPE:        return WSAEPROTOTYPE;
         case ENOPROTOOPT:       return WSAENOPROTOOPT;
         case EPROTONOSUPPORT:   return WSAEPROTONOSUPPORT;
+#ifndef __HAIKU__
         case ESOCKTNOSUPPORT:   return WSAESOCKTNOSUPPORT;
+#endif
         case EOPNOTSUPP:        return WSAEOPNOTSUPP;
         case EPFNOSUPPORT:      return WSAEPFNOSUPPORT;
         case EAFNOSUPPORT:      return WSAEAFNOSUPPORT;
@@ -2062,7 +2066,9 @@ static unsigned int sock_get_error( int err )
         case EISCONN:           return WSAEISCONN;
         case ENOTCONN:          return WSAENOTCONN;
         case ESHUTDOWN:         return WSAESHUTDOWN;
+#ifndef __HAIKU__
         case ETOOMANYREFS:      return WSAETOOMANYREFS;
+#endif
         case ETIMEDOUT:         return WSAETIMEDOUT;
         case ECONNREFUSED:      return WSAECONNREFUSED;
         case ELOOP:             return WSAELOOP;
@@ -2113,7 +2119,9 @@ static int sock_get_ntstatus( int err )
         case EDESTADDRREQ:      return STATUS_INVALID_PARAMETER;
         case EMSGSIZE:          return STATUS_BUFFER_OVERFLOW;
         case EPROTONOSUPPORT:
+#ifndef __HAIKU__
         case ESOCKTNOSUPPORT:
+#endif
         case EPFNOSUPPORT:
         case EAFNOSUPPORT:
         case EPROTOTYPE:        return STATUS_NOT_SUPPORTED;

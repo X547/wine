@@ -169,7 +169,9 @@ static NTSTATUS sock_errno_to_status( int err )
         case EDESTADDRREQ:      return STATUS_INVALID_PARAMETER;
         case EMSGSIZE:          return STATUS_BUFFER_OVERFLOW;
         case EPROTONOSUPPORT:
+#ifndef __HAIKU__
         case ESOCKTNOSUPPORT:
+#endif
         case EPFNOSUPPORT:
         case EAFNOSUPPORT:
         case EPROTOTYPE:        return STATUS_NOT_SUPPORTED;
@@ -1487,11 +1489,16 @@ NTSTATUS sock_ioctl( HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, void *apc
             }
             else
             {
+#ifdef __HAIKU__
+                status = sock_errno_to_status( -1 );
+                break;
+#else
                 if ((ret = ioctl( fd, SIOCATMARK, &value )) < 0)
                 {
                     status = sock_errno_to_status( errno );
                     break;
                 }
+#endif
                 /* windows is reversed with respect to unix */
                 *(int *)out_buffer = !value;
             }
