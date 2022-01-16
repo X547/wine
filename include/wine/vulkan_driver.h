@@ -56,17 +56,17 @@ static inline void *get_vulkan_driver_device_proc_addr(
     name += 2;
 
     if (!strcmp(name, "CreateSwapchainKHR"))
-        return vulkan_funcs->p_vkCreateSwapchainKHR;
+        return (void*)vulkan_funcs->p_vkCreateSwapchainKHR;
     if (!strcmp(name, "DestroySwapchainKHR"))
-        return vulkan_funcs->p_vkDestroySwapchainKHR;
+        return (void*)vulkan_funcs->p_vkDestroySwapchainKHR;
     if (!strcmp(name, "GetDeviceGroupSurfacePresentModesKHR"))
-        return vulkan_funcs->p_vkGetDeviceGroupSurfacePresentModesKHR;
+        return (void*)vulkan_funcs->p_vkGetDeviceGroupSurfacePresentModesKHR;
     if (!strcmp(name, "GetDeviceProcAddr"))
-        return vulkan_funcs->p_vkGetDeviceProcAddr;
+        return (void*)vulkan_funcs->p_vkGetDeviceProcAddr;
     if (!strcmp(name, "GetSwapchainImagesKHR"))
-        return vulkan_funcs->p_vkGetSwapchainImagesKHR;
+        return (void*)vulkan_funcs->p_vkGetSwapchainImagesKHR;
     if (!strcmp(name, "QueuePresentKHR"))
-        return vulkan_funcs->p_vkQueuePresentKHR;
+        return (void*)vulkan_funcs->p_vkQueuePresentKHR;
 
     return NULL;
 }
@@ -79,36 +79,36 @@ static inline void *get_vulkan_driver_instance_proc_addr(
     name += 2;
 
     if (!strcmp(name, "CreateInstance"))
-        return vulkan_funcs->p_vkCreateInstance;
+        return (void*)vulkan_funcs->p_vkCreateInstance;
     if (!strcmp(name, "EnumerateInstanceExtensionProperties"))
-        return vulkan_funcs->p_vkEnumerateInstanceExtensionProperties;
+        return (void*)vulkan_funcs->p_vkEnumerateInstanceExtensionProperties;
 
     if (!instance) return NULL;
 
     if (!strcmp(name, "CreateWin32SurfaceKHR"))
-        return vulkan_funcs->p_vkCreateWin32SurfaceKHR;
+        return (void*)vulkan_funcs->p_vkCreateWin32SurfaceKHR;
     if (!strcmp(name, "DestroyInstance"))
-        return vulkan_funcs->p_vkDestroyInstance;
+        return (void*)vulkan_funcs->p_vkDestroyInstance;
     if (!strcmp(name, "DestroySurfaceKHR"))
-        return vulkan_funcs->p_vkDestroySurfaceKHR;
+        return (void*)vulkan_funcs->p_vkDestroySurfaceKHR;
     if (!strcmp(name, "GetInstanceProcAddr"))
-        return vulkan_funcs->p_vkGetInstanceProcAddr;
+        return (void*)vulkan_funcs->p_vkGetInstanceProcAddr;
     if (!strcmp(name, "GetPhysicalDevicePresentRectanglesKHR"))
-        return vulkan_funcs->p_vkGetPhysicalDevicePresentRectanglesKHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDevicePresentRectanglesKHR;
     if (!strcmp(name, "GetPhysicalDeviceSurfaceCapabilities2KHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceSurfaceCapabilities2KHR;
     if (!strcmp(name, "GetPhysicalDeviceSurfaceCapabilitiesKHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceSurfaceCapabilitiesKHR;
     if (!strcmp(name, "GetPhysicalDeviceSurfaceFormats2KHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceSurfaceFormats2KHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceSurfaceFormats2KHR;
     if (!strcmp(name, "GetPhysicalDeviceSurfaceFormatsKHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceSurfaceFormatsKHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceSurfaceFormatsKHR;
     if (!strcmp(name, "GetPhysicalDeviceSurfacePresentModesKHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceSurfacePresentModesKHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceSurfacePresentModesKHR;
     if (!strcmp(name, "GetPhysicalDeviceSurfaceSupportKHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceSurfaceSupportKHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceSurfaceSupportKHR;
     if (!strcmp(name, "GetPhysicalDeviceWin32PresentationSupportKHR"))
-        return vulkan_funcs->p_vkGetPhysicalDeviceWin32PresentationSupportKHR;
+        return (void*)vulkan_funcs->p_vkGetPhysicalDeviceWin32PresentationSupportKHR;
 
     name -= 2;
 
