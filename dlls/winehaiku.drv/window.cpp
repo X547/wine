@@ -29,19 +29,11 @@
 # include <unistd.h>
 #endif
 
-#define thread_info haiku_thread_info
 
-#include <MessageQueue.h>
-#include <Application.h>
-#include <Window.h>
-#include <View.h>
-#include <Bitmap.h>
+#include "window.h"
+
 #include <Screen.h>
-#include <OS.h>
 #include <Autolock.h>
-#include <locks.h>
-
-#undef thread_info
 
 #include <map>
 
@@ -240,52 +232,6 @@ static void MapKey(char *&chars, size_t &len, int32 key, uint32 modifiers)
 
 
 //#pragma mark -
-
-class WineView: public BView {
-private:
-	HWND fHwnd;
-	struct haikudrv_thread_data *fData;
-	BBitmap *fBitmap;
-	uint32 fOldMouseBtns;
-
-public:
-	WineView(HWND hwnd, struct haikudrv_thread_data *data, BRect frame, const char *name);
-	void UpdateBitmap(BBitmap *bitmap, BRect dirty);
-	void MessageReceived(BMessage *msg);
-
-};
-
-class WineWindow: public BWindow {
-private:
-	WineView *fView;
-	HWND fHwnd;
-	struct haikudrv_thread_data *fData;
-	
-public:
-	mutex fCreateMutex;
-	window_surface *fSurface;
-	bool fSendResizeEvents;
-	bool fInDestroy;
-	RECT fNonClient;
-	//HANDLE fEvent;
-
-	WineWindow(HWND hwnd, struct haikudrv_thread_data *data, BRect frame);
-	virtual ~WineWindow();
-	
-	bool QuitRequested() override;
-
-	void FrameMoved(BPoint newPosition) override;
-	void FrameResized(float newWidth, float newHeight) override;
-
-	HWND Handle() {return fHwnd;}
-	WineView *View() {return fView;}
-};
-
-class WineApplication: public BApplication {
-public:
-	WineApplication();
-};
-
 
 WineView::WineView(HWND hwnd, struct haikudrv_thread_data *data, BRect frame, const char *name):
 	BView(frame, name, B_FOLLOW_NONE, B_SUBPIXEL_PRECISE),
@@ -570,7 +516,7 @@ static UINT CALLBACK WindowThread(void *arg)
 	return 0;
 }
 
-static WineWindow* HaikuThisWindow(HWND hwnd, bool create = true)
+WineWindow* HaikuThisWindow(HWND hwnd, bool create)
 {
 	BAutolock lock(be_app);
 	auto it = sWindows->find(hwnd);

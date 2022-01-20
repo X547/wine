@@ -13,7 +13,7 @@ C_SRCS = \
 	ime.c \
 	init.c \
 	keyboard.c \
-	mouse.c \
+	mouse.cpp \
 	settings.cpp \
 	systray.c \
 	window.cpp \

@@ -25,7 +25,11 @@
 #include <dlfcn.h>
 #include <stdarg.h>
 
+#define thread_info haiku_thread_info
+#include <WindowScreen.h>
+#undef thread_info
 
+extern "C" {
 #define NONAMELESSUNION
 #define OEMRESOURCE
 #include "windef.h"
@@ -36,6 +40,8 @@
 #include "wine/server.h"
 #include "wine/unicode.h"
 #include "wine/debug.h"
+}
+
 
 WINE_DEFAULT_DEBUG_CHANNEL(cursor);
 
@@ -59,7 +65,11 @@ void CDECL HAIKUDRV_SetCursor( HCURSOR handle )
  */
 BOOL CDECL HAIKUDRV_SetCursorPos( INT x, INT y )
 {
-    return TRUE;
+/*
+	ERR("(%d, %d)\n", x, y);
+	set_mouse_position(x, y);
+	return TRUE;
+*/
 }
 
 /***********************************************************************
@@ -67,7 +77,15 @@ BOOL CDECL HAIKUDRV_SetCursorPos( INT x, INT y )
  */
 BOOL CDECL HAIKUDRV_GetCursorPos(LPPOINT pos)
 {
-    return TRUE;
+/*
+  ERR("()\n");
+	BPoint haikuPos;
+	if (get_mouse(&haikuPos, NULL) < B_OK)
+		return FALSE;
+	pos->x = haikuPos.x;
+	pos->y = haikuPos.y;
+*/
+	return TRUE;
 }
 
 /***********************************************************************
