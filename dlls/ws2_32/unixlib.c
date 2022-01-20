@@ -86,6 +86,7 @@
 # include <linux/irda.h>
 # define HAS_IRDA
 #endif
+#define HAVE_GETADDRINFO
 
 #include "ntstatus.h"
 #define WIN32_NO_STATUS

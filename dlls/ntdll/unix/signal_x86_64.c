@@ -256,7 +256,7 @@ __ASM_GLOBAL_FUNC( alloc_fs_sel,
 #define R13_sig(context)     ((context)->uc_mcontext.r13)
 #define R14_sig(context)     ((context)->uc_mcontext.r14)
 #define R15_sig(context)     ((context)->uc_mcontext.r15)
-#define CS_sig(context)      NULL
+#define CS_sig(context)      cs64_sel
 #define FS_sig(context)      NULL
 #define GS_sig(context)      NULL
 #define EFL_sig(context)     ((context)->uc_mcontext.rflags)
@@ -2625,6 +2625,46 @@ static BOOL handle_syscall_trap( ucontext_t *sigcontext )
 }
 
 
+NTSTATUS static LdrFindEntryForAddress2( const void *addr, PLDR_DATA_TABLE_ENTRY *pmod )
+{
+    PLIST_ENTRY mark, entry;
+    PLDR_DATA_TABLE_ENTRY mod;
+
+    mark = &NtCurrentTeb()->Peb->LdrData->InMemoryOrderModuleList;
+    for (entry = mark->Flink; entry != mark; entry = entry->Flink)
+    {
+        mod = CONTAINING_RECORD(entry, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
+        if (mod->DllBase <= addr &&
+            (const char *)addr < (char*)mod->DllBase + mod->SizeOfImage)
+        {
+            *pmod = mod;
+            return STATUS_SUCCESS;
+        }
+    }
+    return STATUS_NO_MORE_ENTRIES;
+}
+
+static void WriteRtlString(UNICODE_STRING str)
+{
+	for (int i = 0; i < str.Length; i++) {
+		printf("%c", str.Buffer[i]);
+	}
+}
+
+static void WriteModuleName(addr_t address)
+{
+	HMODULE hModule = NULL;
+	PLDR_DATA_TABLE_ENTRY pmod = NULL;
+	LdrFindEntryForAddress2(
+		(void*)address,
+		&pmod
+	);
+	hModule = pmod == NULL ? NULL : pmod->DllBase;
+	printf("  hModule: %p\n", hModule);
+	if (hModule != NULL)
+	printf("  BaseDllName: %s\n", debugstr_w(pmod->BaseDllName.Buffer)); printf("\n");
+}
+
 /**********************************************************************
  *		segv_handler
  *
@@ -2636,11 +2676,16 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
     struct xcontext context;
     ucontext_t *ucontext = sigcontext;
     printf("segv_handler\n");
+    printf("&segv_handler: %p\n", &segv_handler);
+    printf("pKiUserExceptionDispatcher: %p\n", pKiUserExceptionDispatcher);
+    printf("  thread: %" PRId32 "\n", find_thread(NULL));
     printf("  IP: %#" PRIx64 "\n", RIP_sig(ucontext));
     printf("  SP: %#" PRIx64 "\n", RSP_sig(ucontext));
     printf("  FP: %#" PRIx64 "\n", RBP_sig(ucontext));
     printf("  address: %#" PRIx64 "\n", siginfo->si_addr);
-    _exit(1);
+    WriteModuleName(RIP_sig(ucontext));
+    fgetc(stdin);
+    //_exit(1);
 
     rec.ExceptionAddress = (void *)RIP_sig(ucontext);
     save_context( &context, sigcontext );
@@ -2829,6 +2874,18 @@ static void int_handler( int signal, siginfo_t *siginfo, void *sigcontext )
  */
 static void abrt_handler( int signal, siginfo_t *siginfo, void *sigcontext )
 {
+    ucontext_t *ucontext = sigcontext;
+    printf("abrt_handler\n");
+    printf("&abrt_handler: %p\n", &segv_handler);
+    printf("pKiUserExceptionDispatcher: %p\n", pKiUserExceptionDispatcher);
+    printf("  thread: %" PRId32 "\n", find_thread(NULL));
+    printf("  IP: %#" PRIx64 "\n", RIP_sig(ucontext));
+    printf("  SP: %#" PRIx64 "\n", RSP_sig(ucontext));
+    printf("  FP: %#" PRIx64 "\n", RBP_sig(ucontext));
+    printf("  address: %#" PRIx64 "\n", siginfo->si_addr);
+    //fgetc(stdin);
+    //_exit(1);
+
     EXCEPTION_RECORD rec = { EXCEPTION_WINE_ASSERTION, EH_NONCONTINUABLE };
 
     setup_exception( sigcontext, &rec );
@@ -2855,7 +2912,7 @@ static void quit_handler( int signal, siginfo_t *siginfo, void *ucontext )
 static void usr1_handler( int signal, siginfo_t *siginfo, void *ucontext )
 {
     struct xcontext context;
-
+//#ifndef __HAIKU__
     if (is_inside_syscall( ucontext ))
     {
         DECLSPEC_ALIGN(64) XSTATE xs;
@@ -2872,6 +2929,7 @@ static void usr1_handler( int signal, siginfo_t *siginfo, void *ucontext )
         wait_suspend( &context.c );
         restore_context( &context, ucontext );
     }
+//#endif
 }
 
 

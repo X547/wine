@@ -1378,6 +1378,9 @@ static void build(struct options* opts)
     {
 	strarray_add(&link_args, "-lm");
 	strarray_add(&link_args, "-lc");
+#ifdef __HAIKU__
+	strarray_add(&link_args, "-lnetwork");
+#endif
     }
 
     if (libgcc) strarray_add(&link_args, libgcc);

@@ -2129,7 +2129,7 @@ INT X11DRV_GetKeyNameText( LONG lParam, LPWSTR lpBuffer, INT nSize )
   int keyi;
   KeySym keys;
   char *name;
-
+#if 0
   scanCode = lParam >> 16;
   scanCode &= 0x1ff;  /* keep "extended-key" flag with code */
 
@@ -2229,7 +2229,7 @@ INT X11DRV_GetKeyNameText( LONG lParam, LPWSTR lpBuffer, INT nSize )
           return rc;
       }
   }
-
+#endif
   /* Finally issue WARN for unknown keys   */
 
   pthread_mutex_unlock( &kbd_mutex );

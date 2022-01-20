@@ -591,6 +591,8 @@ static void restart_if_wow64(void)
 
 int main(int argc, char** argv)
 {
+    return 0;
+
     int 	        retv = 0;
     HANDLE              hFile = INVALID_HANDLE_VALUE;
     enum dbg_start      ds;

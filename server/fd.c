@@ -1001,6 +1001,7 @@ void main_loop(void)
 
         if (!active_users) break;  /* last user removed by a timeout */
 
+        //printf("poll(%d, %d), active_users: %d\n", nb_users, timeout, active_users);
         ret = poll( pollfd, nb_users, timeout );
         set_current_time();
 

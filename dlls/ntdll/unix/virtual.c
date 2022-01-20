@@ -22,6 +22,12 @@
 #pragma makedep unix
 #endif
 
+#define cpu_info haiku_cpu_info
+#if defined(__HAIKU__)
+# include <OS.h>
+#endif
+#undef cpu_info
+
 #include "config.h"
 
 #include <assert.h>
@@ -3106,6 +3112,7 @@ NTSTATUS virtual_alloc_thread_stack( INITIAL_TEB *stack, ULONG_PTR zero_bits, SI
 
     if (!reserve_size) reserve_size = main_image_info.MaximumStackSize;
     if (!commit_size) commit_size = main_image_info.CommittedStackSize;
+    commit_size = reserve_size;
 
     size = max( reserve_size, commit_size );
     if (size < 1024 * 1024) size = 1024 * 1024;  /* Xlib needs a large stack */
