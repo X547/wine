@@ -22,13 +22,18 @@
 #pragma makedep unix
 #endif
 
+#include "config.h"
+
 #define cpu_info haiku_cpu_info
 #if defined(__HAIKU__)
 # include <OS.h>
+# include <private/system/image_defs.h>
+
+extern image_id _kern_register_image(extended_image_info *info, size_t size);
+extern status_t _kern_unregister_image(image_id id);
+
 #endif
 #undef cpu_info
-
-#include "config.h"
 
 #include <assert.h>
 #include <errno.h>
@@ -613,6 +618,47 @@ void release_builtin_module( void *module )
         }
         break;
     }
+}
+
+
+static void haiku_register_module( void *module, int fd, WCHAR *wpath )
+{
+	IMAGE_DOS_HEADER *dos = (IMAGE_DOS_HEADER *)module;
+	IMAGE_NT_HEADERS *nt = (IMAGE_NT_HEADERS *)((char*)module + dos->e_lfanew);
+
+	struct stat stat;
+	fstat(fd, &stat);
+
+	extended_image_info info = {
+		.basic_info = {
+			.type = (true || (nt->FileHeader.Characteristics & IMAGE_FILE_DLL)) ? B_LIBRARY_IMAGE : B_APP_IMAGE,
+			.device = stat.st_dev,
+			.node = stat.st_ino,
+			.text = (uint8*)module + nt->OptionalHeader.BaseOfCode,
+			.data = (uint8*)module + nt->OptionalHeader.BaseOfCode + nt->OptionalHeader.SizeOfCode,
+			.text_size = nt->OptionalHeader.SizeOfCode,
+			.data_size = nt->OptionalHeader.SizeOfImage - nt->OptionalHeader.BaseOfCode,
+		},
+		.text_delta = (int64)module + nt->OptionalHeader.BaseOfCode - (int64)nt->OptionalHeader.ImageBase
+	};
+	ntdll_wcstoumbs(wpath, wcslen(wpath), info.basic_info.name, MAXPATHLEN, FALSE);
+
+	if (true || strstr(info.basic_info.name, ".so") != NULL)
+		return;
+/*
+	static const char builtin_signature[32] = "Wine builtin DLL";
+	if (memcmp( dos + 1, builtin_signature, sizeof(builtin_signature) ) == 0)
+		return;
+*/
+	for (size_t i = 0; info.basic_info.name[i] != '\0'; i++) {
+		if (info.basic_info.name[i] == '\\')
+			info.basic_info.name[i] = '/';
+	}
+	_kern_register_image(&info, sizeof(info));
+}
+
+static void haiku_unregister_module( void *module )
+{
 }
 
 
@@ -2479,6 +2525,7 @@ static NTSTATUS virtual_map_image( HANDLE mapping, ACCESS_MASK access, void **ad
     if (status >= 0)
     {
         if (is_builtin) add_builtin_module( view->base, NULL );
+        haiku_register_module(view->base, unix_fd, filename);
         *addr_ptr = view->base;
         *size_ptr = size;
         VIRTUAL_DEBUG_DUMP_VIEW( view );
