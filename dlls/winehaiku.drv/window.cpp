@@ -536,6 +536,16 @@ WineWindow* HaikuThisWindow(HWND hwnd, bool create)
 	return window;
 }
 
+static void HaikuRemoveWindow(HWND hwnd)
+{
+	BAutolock lock(be_app);
+	auto it = sWindows->find(hwnd);
+	if (it == sWindows->end()) {
+		ERR("hwnd %p not present in host window list\n", hwnd);
+	}
+	sWindows->erase(it);
+}
+
 
 //#pragma mark - window_surface
 
@@ -760,9 +770,16 @@ static BOOL is_window_managed( HWND hwnd, UINT swp_flags, const RECT *window_rec
 {
     DWORD style, ex_style;
 
+    return hwnd == GetAncestor(hwnd, GA_ROOT);
+
     /* child windows are not managed */
     style = GetWindowLongW( hwnd, GWL_STYLE );
-    if ((style & (WS_CHILD|WS_POPUP)) == WS_CHILD) return FALSE;
+    if ((style & (WS_CHILD|WS_POPUP)) == WS_CHILD) {
+    	HWND hwndParent = GetParent(hwnd);
+    	if (hwndParent == GetDesktopWindow())
+    		return TRUE;
+    	return FALSE;
+    }
     return TRUE;
 
     /* activated windows are managed */
@@ -899,6 +916,7 @@ static void GetHaikuWindowFlags(
     }
     else if (ex_style & WS_EX_DLGMODALFRAME) {if (look == B_NO_BORDER_WINDOW_LOOK) look = B_MODAL_WINDOW_LOOK;}
     else if ((style & (WS_DLGFRAME|WS_BORDER)) == WS_DLGFRAME) {if (look == B_NO_BORDER_WINDOW_LOOK) look = B_MODAL_WINDOW_LOOK;}
+    else if ((style & (WS_DLGFRAME|WS_BORDER)) == WS_BORDER) {if (look == B_NO_BORDER_WINDOW_LOOK) look = B_BORDERED_WINDOW_LOOK;}
 }
 
 
@@ -951,6 +969,7 @@ void CDECL HAIKUDRV_DestroyWindow( HWND hwnd )
 	wnd->fInDestroy = true;
 	BMessenger(wnd).SendMessage(B_QUIT_REQUESTED);
 	wnd->Unlock();
+	HaikuRemoveWindow(hwnd);
 }
 
 
@@ -1043,7 +1062,7 @@ BOOL CDECL HAIKUDRV_ScrollDC( HDC hdc, INT dx, INT dy, HRGN update )
 void CDECL HAIKUDRV_SetCapture( HWND hwnd, UINT flags )
 {
 	FIXME("(%ld, %x): stub\n", (long)hwnd, flags);
-	return;
+	hwnd = GetAncestor(hwnd, GA_ROOT);
 	if (hwnd == sCaptureWnd) return;
 	WineWindow* prevWnd = HaikuThisWindow(sCaptureWnd, false);
 	if (prevWnd != NULL) {
@@ -1051,7 +1070,8 @@ void CDECL HAIKUDRV_SetCapture( HWND hwnd, UINT flags )
 		prevWnd->View()->SetEventMask(0);
 		prevWnd->Unlock();
 	}
-	WineWindow* nextWnd = HaikuThisWindow(hwnd, false);
+	sCaptureWnd = hwnd;
+	WineWindow* nextWnd = HaikuThisWindow(sCaptureWnd, false);
 	if (nextWnd != NULL) {
 		nextWnd->Lock();
 		nextWnd->View()->SetEventMask(B_POINTER_EVENTS | B_KEYBOARD_EVENTS);
@@ -1077,13 +1097,15 @@ BOOL CDECL HAIKUDRV_WindowPosChanging( HWND hwnd, HWND insert_after, UINT swp_fl
                                      struct window_surface **surface )
 {
 	//FIXME("(%ld): stub\n", (long)hwnd);
-	ERR("(%ld)\n", (long)hwnd);
+	char className[256];
+	GetClassNameA(hwnd, className, 256);
+	//ERR("(%ld), class: \"%s\"\n", (long)hwnd, className);
 	
 	if (hwnd == GetDesktopWindow()) return TRUE;
 	if (!is_window_managed( hwnd, swp_flags, window_rect )) return TRUE;
 	
-	ERR("window_rect: (%d, %d, %d, %d)\n", window_rect->left, window_rect->top, window_rect->right, window_rect->bottom);
-	ERR("client_rect: (%d, %d, %d, %d)\n", client_rect->left, client_rect->top, client_rect->right, client_rect->bottom);
+	//ERR("window_rect: (%d, %d, %d, %d)\n", window_rect->left, window_rect->top, window_rect->right, window_rect->bottom);
+	//ERR("client_rect: (%d, %d, %d, %d)\n", client_rect->left, client_rect->top, client_rect->right, client_rect->bottom);
 	
 	DWORD style = GetWindowLongW(hwnd, GWL_STYLE);
 	DWORD exStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
@@ -1133,11 +1155,11 @@ void CDECL HAIKUDRV_WindowPosChanged( HWND hwnd, HWND insert_after, UINT swp_fla
                                     const RECT *visible_rect, const RECT *valid_rects,
                                     struct window_surface *surface )
 {
-	ERR("(%ld)\n", (long)hwnd);
+	//ERR("(%ld)\n", (long)hwnd);
   WineWindow *window = HaikuThisWindow(hwnd, false);
   if (window == NULL) return;
 
- 	ERR("(%p, swp_flags: %x)\n", hwnd, swp_flags);
+ 	//ERR("(%p, swp_flags: %x)\n", hwnd, swp_flags);
 
   DWORD style = GetWindowLongW(hwnd, GWL_STYLE);
   DWORD exStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
