@@ -1139,7 +1139,7 @@ static void *haikudrv_get_vk_instance_proc_addr(VkInstance instance, const char 
 }
 
 
-static const struct vulkan_funcs *get_vulkan_driver(UINT version)
+const struct vulkan_funcs *HAIKUDRV_wine_get_vulkan_driver(UINT version)
 {
     TRACE("()\n");
     if (version != WINE_VULKAN_DRIVER_VERSION)
@@ -1149,18 +1149,4 @@ static const struct vulkan_funcs *get_vulkan_driver(UINT version)
     }
 
     return &vulkan_funcs;
-}
-
-
-const struct vulkan_funcs *CDECL HAIKUDRV_wine_get_vulkan_driver(PHYSDEV dev, UINT version)
-{
-    TRACE("()\n");
-    const struct vulkan_funcs *ret;
-
-    if (!(ret = get_vulkan_driver( version )))
-    {
-        dev = GET_NEXT_PHYSDEV( dev, wine_get_vulkan_driver );
-        ret = dev->funcs->wine_get_vulkan_driver( dev, version );
-    }
-    return ret;
 }

@@ -63,7 +63,7 @@ extern BOOL CDECL HAIKUDRV_CreateDC(PHYSDEV *pdev, LPCWSTR device, LPCWSTR outpu
 extern BOOL CDECL HAIKUDRV_CreateCompatibleDC(PHYSDEV orig, PHYSDEV *pdev);
 extern BOOL CDECL HAIKUDRV_DeleteDC(PHYSDEV dev);
 extern INT CDECL HAIKUDRV_GetDeviceCaps(PHYSDEV dev, INT cap);
-extern const struct vulkan_funcs *CDECL HAIKUDRV_wine_get_vulkan_driver(PHYSDEV dev, UINT version);
+extern const struct vulkan_funcs *CDECL HAIKUDRV_wine_get_vulkan_driver(UINT version);
 
 extern BOOL CDECL HAIKUDRV_ActivateKeyboardLayout( HKL hkl, UINT flags ) DECLSPEC_HIDDEN;
 extern void CDECL HAIKUDRV_Beep(void) DECLSPEC_HIDDEN;

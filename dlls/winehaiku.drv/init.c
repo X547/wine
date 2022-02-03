@@ -37,7 +37,6 @@ const struct user_driver_funcs haikudrv_funcs =
 //  GDI_HOOK(GetDeviceGammaRamp),
 //  GDI_HOOK(SetDeviceGammaRamp),
 //  GDI_WINE_HOOK(wine_get_wgl_driver),
-    GDI_WINE_HOOK(wine_get_vulkan_driver),
     .dc_funcs.priority = GDI_PRIORITY_GRAPHICS_DRV,
 
     /* keyboard functions */
@@ -89,6 +88,8 @@ const struct user_driver_funcs haikudrv_funcs =
 
     /* system parameters */
     USER_HOOK(SystemParametersInfo),
+
+    USER_HOOK(wine_get_vulkan_driver),
 
     /* thread management */
     USER_HOOK(ThreadDetach),
