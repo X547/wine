@@ -421,10 +421,10 @@ VkResult VKWineSurface::GetCapabilities(VkPhysicalDevice physDev, VkSurfaceCapab
 
 VkResult VKWineSurface::GetFormats(VkPhysicalDevice physDev, uint32_t *count, VkSurfaceFormatKHR *surfaceFormats)
 {
-/*
+#if 0
 	VkFormat formats[] = {VK_FORMAT_B8G8R8A8_UNORM};
 	uint32_t formatCnt = 1;
-*/
+#else
 	constexpr int max_core_1_0_formats = VK_FORMAT_ASTC_12x12_SRGB_BLOCK + 1;
 	VkFormat formats[max_core_1_0_formats];
 	uint32_t formatCnt = 0;
@@ -440,6 +440,7 @@ VkResult VKWineSurface::GetFormats(VkPhysicalDevice physDev, uint32_t *count, Vk
 			formats[formatCnt++] = (VkFormat)format;
 		}
 	}
+#endif
 
 	if (surfaceFormats == NULL) {
 		*count = formatCnt;
@@ -537,7 +538,7 @@ VkResult VKWineSwapchain::CreateBuffer()
 	VkImageCreateInfo createInfo{
 		.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 		.imageType = VK_IMAGE_TYPE_2D,
-		.format = VK_FORMAT_R8G8B8A8_UNORM,
+		.format = VK_FORMAT_B8G8R8A8_UNORM,
 		.extent = {
 			.width = fImageExtent.width,
 			.height = fImageExtent.height,
@@ -586,6 +587,7 @@ VkResult VKWineSwapchain::CopyToBuffer(VkImage srcImage, int32_t width, int32_t 
 
 	// srcImage is already in VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, and does not need to be transitioned
 
+#if 0
 	VkImageCopy imageCopyRegion{};
 	imageCopyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	imageCopyRegion.srcSubresource.layerCount = 1;
@@ -601,6 +603,29 @@ VkResult VKWineSwapchain::CopyToBuffer(VkImage srcImage, int32_t width, int32_t 
 		fBuffer->ToHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
 		1,
 		&imageCopyRegion
+	);
+#endif
+	// Define the region to blit (we will blit the whole swapchain image)
+	VkOffset3D blitSize;
+	blitSize.x = width;
+	blitSize.y = height;
+	blitSize.z = 1;
+	VkImageBlit imageBlitRegion{};
+	imageBlitRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageBlitRegion.srcSubresource.layerCount = 1;
+	imageBlitRegion.srcOffsets[1] = blitSize;
+	imageBlitRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageBlitRegion.dstSubresource.layerCount = 1;
+	imageBlitRegion.dstOffsets[1] = blitSize;
+
+	// Issue the blit command
+	vkCmdBlitImage(
+		copyCmd,
+		srcImage, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		fBuffer->ToHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		1,
+		&imageBlitRegion,
+		VK_FILTER_NEAREST
 	);
 
 	// Transition destination image to general layout, which is the required layout for mapping the image memory later on
