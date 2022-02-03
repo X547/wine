@@ -586,10 +586,11 @@ static NTSTATUS try_recv( int fd, struct async_recv_ioctl *async, ULONG_PTR *siz
     }
     hdr.msg_iov = async->iov;
     hdr.msg_iovlen = async->count;
-#ifndef HAVE_STRUCT_MSGHDR_MSG_ACCRIGHTS
+#if 0 //ndef HAVE_STRUCT_MSGHDR_MSG_ACCRIGHTS
     hdr.msg_control = control_buffer;
     hdr.msg_controllen = sizeof(control_buffer);
 #endif
+    TRACE("async->unix_flags: %#x\n", async->unix_flags);
     while ((ret = virtual_locked_recvmsg( fd, &hdr, async->unix_flags )) < 0 && errno == EINTR);
 
     if (ret < 0)
@@ -599,6 +600,7 @@ static NTSTATUS try_recv( int fd, struct async_recv_ioctl *async, ULONG_PTR *siz
         if ((async->unix_flags & MSG_OOB) && errno == EINVAL)
             errno = EWOULDBLOCK;
 
+        // warn:winsock:try_recv recvmsg: Operation not supported
         if (errno != EWOULDBLOCK) WARN( "recvmsg: %s\n", strerror( errno ) );
         return sock_errno_to_status( errno );
     }

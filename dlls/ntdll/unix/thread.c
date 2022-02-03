@@ -24,6 +24,14 @@
 
 #include "config.h"
 
+#ifdef __HAIKU__
+#define cpu_info haiku_cpu_info
+#define exit_thread haiku_exit_thread
+#include <OS.h>
+#undef cpu_info
+#undef exit_thread
+#endif
+
 #include <assert.h>
 #include <errno.h>
 #include <limits.h>
@@ -1818,6 +1826,13 @@ BOOL get_thread_times(int unix_pid, int unix_tid, LARGE_INTEGER *kernel_time, LA
     }
     procstat_close(pstat);
     return ret;
+#elif defined(__HAIKU__)
+    thread_info info;
+    if (get_thread_info(unix_tid, &info) < B_OK)
+        return FALSE;
+    kernel_time->QuadPart = 10 * info.kernel_time;
+    user_time->QuadPart = 10 * info.user_time;
+    return TRUE;
 #else
     static int once;
     if (!once++) FIXME("not implemented on this platform\n");
