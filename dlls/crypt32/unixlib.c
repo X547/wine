@@ -612,6 +612,9 @@ static void import_certs_from_path(LPCSTR path, BOOL allow_dir)
 }
 
 static const char * const CRYPT_knownLocations[] = {
+#ifdef __HAIKU__
+ "/boot/system/data/ssl/CARootCertificates.pem",
+#else
  "/etc/ssl/certs/ca-certificates.crt",
  "/etc/ssl/certs",
  "/etc/pki/tls/certs/ca-bundle.crt",
@@ -619,6 +622,7 @@ static const char * const CRYPT_knownLocations[] = {
  "/usr/local/share/certs/",
  "/etc/sfw/openssl/certs",
  "/etc/security/cacerts",  /* Android */
+#endif
 };
 
 static void load_root_certs(void)
