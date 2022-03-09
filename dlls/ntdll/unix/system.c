@@ -24,6 +24,12 @@
 
 #include "config.h"
 
+#ifdef __HAIKU__
+#define cpu_info haiku_cpu_info
+#include <OS.h>
+#undef cpu_info
+#endif
+
 #include <fcntl.h>
 #include <string.h>
 #include <stdarg.h>
@@ -2006,6 +2012,16 @@ static void get_performance_info( SYSTEM_PERFORMANCE_INFORMATION *info )
             }
         }
 #endif
+    }
+#endif
+
+#ifdef __HAIKU__
+    system_info sysInfo;
+    if (get_system_info(&sysInfo) >= B_OK) {
+        totalram = sysInfo.max_pages * B_PAGE_SIZE;
+        freeram = sysInfo.free_memory;
+        totalswap = sysInfo.max_swap_pages * B_PAGE_SIZE;
+        freeswap = sysInfo.free_swap_pages * B_PAGE_SIZE;
     }
 #endif
 
