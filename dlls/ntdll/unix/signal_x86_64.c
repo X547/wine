@@ -66,8 +66,16 @@
 #endif
 #ifdef __HAIKU__
 # include <SupportDefs.h>
+#if 0
+# include <private/system/syscalls.h>
+# include <private/system/arch/x86/arch_thread_defs.h>
+#else
+#define THREAD_SYSCALLS			"thread"
+#define THREAD_SET_GS_BASE		1
+
 extern status_t		_kern_generic_syscall(const char *subsystem, uint32 function,
 						void *buffer, size_t bufferSize);
+#endif
 #endif
 
 #define NONAMELESSUNION
@@ -3061,7 +3069,7 @@ void signal_init_thread( TEB *teb )
        TEB so alloc_tls_slot() can find it. */
     teb->Reserved5[0] = amd64_thread_data()->pthread_teb;
 #elif defined (__HAIKU__)
-    _kern_generic_syscall("thread", /*THREAD_SET_GS_BASE*/ 1, teb, 0);
+    _kern_generic_syscall(THREAD_SYSCALLS, THREAD_SET_GS_BASE, &teb, sizeof(teb));
 #else
 # error Please define setting %gs for your architecture
 #endif
