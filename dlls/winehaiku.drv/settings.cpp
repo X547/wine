@@ -43,7 +43,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(x11settings);
  *		EnumDisplaySettingsEx  (HAIKUDRV.@)
  *
  */
-BOOL CDECL HAIKUDRV_EnumDisplaySettingsEx( LPCWSTR name, DWORD n, LPDEVMODEW devmode, DWORD flags)
+BOOL HAIKUDRV_EnumDisplaySettingsEx( LPCWSTR name, DWORD n, LPDEVMODEW devmode, DWORD flags)
 {
     switch (n) {
     	case ENUM_REGISTRY_SETTINGS:
@@ -67,7 +67,7 @@ BOOL CDECL HAIKUDRV_EnumDisplaySettingsEx( LPCWSTR name, DWORD n, LPDEVMODEW dev
  *		ChangeDisplaySettingsEx  (HAIKUDRV.@)
  *
  */
-LONG CDECL HAIKUDRV_ChangeDisplaySettingsEx( LPCWSTR devname, LPDEVMODEW devmode,
+LONG HAIKUDRV_ChangeDisplaySettingsEx( LPCWSTR devname, LPDEVMODEW devmode,
                                            HWND hwnd, DWORD flags, LPVOID lpvoid )
 {
     return 0;

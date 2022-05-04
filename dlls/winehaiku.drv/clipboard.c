@@ -93,7 +93,7 @@ WINE_DEFAULT_DEBUG_CHANNEL(clipboard);
 /**************************************************************************
  *		HAIKUDRV_UpdateClipboard
  */
-void CDECL HAIKUDRV_UpdateClipboard(void)
+void HAIKUDRV_UpdateClipboard(void)
 {
 }
 

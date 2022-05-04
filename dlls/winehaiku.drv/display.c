@@ -41,7 +41,7 @@
 WINE_DEFAULT_DEBUG_CHANNEL(haikudrv);
 
 
-void CDECL HAIKUDRV_UpdateDisplayDevices( const struct gdi_device_manager *device_manager,
+void HAIKUDRV_UpdateDisplayDevices( const struct gdi_device_manager *device_manager,
                                         BOOL force, void *param )
 {
     INT gpu_count, adapter_count, monitor_count;

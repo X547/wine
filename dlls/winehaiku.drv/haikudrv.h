@@ -65,56 +65,56 @@ extern BOOL CDECL HAIKUDRV_DeleteDC(PHYSDEV dev);
 extern INT CDECL HAIKUDRV_GetDeviceCaps(PHYSDEV dev, INT cap);
 extern const struct vulkan_funcs *CDECL HAIKUDRV_wine_get_vulkan_driver(UINT version);
 
-extern BOOL CDECL HAIKUDRV_ActivateKeyboardLayout( HKL hkl, UINT flags ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_Beep(void) DECLSPEC_HIDDEN;
-extern INT CDECL HAIKUDRV_GetKeyNameText( LONG lparam, LPWSTR buffer, INT size ) DECLSPEC_HIDDEN;
-extern UINT CDECL HAIKUDRV_MapVirtualKeyEx( UINT code, UINT map_type, HKL hkl ) DECLSPEC_HIDDEN;
-extern INT CDECL HAIKUDRV_ToUnicodeEx( UINT virtKey, UINT scanCode, const BYTE *lpKeyState,
+extern BOOL HAIKUDRV_ActivateKeyboardLayout( HKL hkl, UINT flags ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_Beep(void) DECLSPEC_HIDDEN;
+extern INT HAIKUDRV_GetKeyNameText( LONG lparam, LPWSTR buffer, INT size ) DECLSPEC_HIDDEN;
+extern UINT HAIKUDRV_MapVirtualKeyEx( UINT code, UINT map_type, HKL hkl ) DECLSPEC_HIDDEN;
+extern INT HAIKUDRV_ToUnicodeEx( UINT virtKey, UINT scanCode, const BYTE *lpKeyState,
                                      LPWSTR bufW, int bufW_size, UINT flags, HKL hkl ) DECLSPEC_HIDDEN;
-extern SHORT CDECL HAIKUDRV_VkKeyScanEx( WCHAR wChar, HKL hkl ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_DestroyCursorIcon( HCURSOR handle ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetCursor( HCURSOR handle ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_SetCursorPos( INT x, INT y ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_GetCursorPos( LPPOINT pos ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_ClipCursor( LPCRECT clip ) DECLSPEC_HIDDEN;
-extern LONG CDECL HAIKUDRV_ChangeDisplaySettingsEx( LPCWSTR devname, LPDEVMODEW devmode,
+extern SHORT HAIKUDRV_VkKeyScanEx( WCHAR wChar, HKL hkl ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_DestroyCursorIcon( HCURSOR handle ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetCursor( HCURSOR handle ) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_SetCursorPos( INT x, INT y ) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_GetCursorPos( LPPOINT pos ) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_ClipCursor( LPCRECT clip ) DECLSPEC_HIDDEN;
+extern LONG HAIKUDRV_ChangeDisplaySettingsEx( LPCWSTR devname, LPDEVMODEW devmode,
                                                   HWND hwnd, DWORD flags, LPVOID lpvoid ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_EnumDisplaySettingsEx( LPCWSTR name, DWORD n, LPDEVMODEW devmode,
+extern BOOL HAIKUDRV_EnumDisplaySettingsEx( LPCWSTR name, DWORD n, LPDEVMODEW devmode,
                                                 DWORD flags ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_UpdateDisplayDevices( const struct gdi_device_manager *device_manager,
+extern void HAIKUDRV_UpdateDisplayDevices( const struct gdi_device_manager *device_manager,
                                                BOOL force, void *param ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_CreateDesktopWindow( HWND hwnd ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_CreateWindow( HWND hwnd ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_DestroyWindow( HWND hwnd ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_FlashWindowEx( PFLASHWINFO pfinfo ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_GetDC( HDC hdc, HWND hwnd, HWND top, const RECT *win_rect,
+extern BOOL HAIKUDRV_CreateDesktopWindow( HWND hwnd ) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_CreateWindow( HWND hwnd ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_DestroyWindow( HWND hwnd ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_FlashWindowEx( PFLASHWINFO pfinfo ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_GetDC( HDC hdc, HWND hwnd, HWND top, const RECT *win_rect,
                                 const RECT *top_rect, DWORD flags ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_ReleaseDC( HWND hwnd, HDC hdc ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_ScrollDC( HDC hdc, INT dx, INT dy, HRGN update ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetCapture( HWND hwnd, UINT flags ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetLayeredWindowAttributes( HWND hwnd, COLORREF key, BYTE alpha,
+extern void HAIKUDRV_ReleaseDC( HWND hwnd, HDC hdc ) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_ScrollDC( HDC hdc, INT dx, INT dy, HRGN update ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetCapture( HWND hwnd, UINT flags ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetLayeredWindowAttributes( HWND hwnd, COLORREF key, BYTE alpha,
                                                      DWORD flags ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetParent( HWND hwnd, HWND parent, HWND old_parent ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetWindowIcon( HWND hwnd, UINT type, HICON icon ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetWindowRgn( HWND hwnd, HRGN hrgn, BOOL redraw ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetWindowStyle( HWND hwnd, INT offset, STYLESTRUCT *style ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetWindowText( HWND hwnd, LPCWSTR text ) DECLSPEC_HIDDEN;
-extern UINT CDECL HAIKUDRV_ShowWindow( HWND hwnd, INT cmd, RECT *rect, UINT swp ) DECLSPEC_HIDDEN;
-extern LRESULT CDECL HAIKUDRV_SysCommand( HWND hwnd, WPARAM wparam, LPARAM lparam ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_UpdateClipboard(void) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_UpdateLayeredWindow( HWND hwnd, const UPDATELAYEREDWINDOWINFO *info,
+extern void HAIKUDRV_SetParent( HWND hwnd, HWND parent, HWND old_parent ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetWindowIcon( HWND hwnd, UINT type, HICON icon ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetWindowRgn( HWND hwnd, HRGN hrgn, BOOL redraw ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetWindowStyle( HWND hwnd, INT offset, STYLESTRUCT *style ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_SetWindowText( HWND hwnd, LPCWSTR text ) DECLSPEC_HIDDEN;
+extern UINT HAIKUDRV_ShowWindow( HWND hwnd, INT cmd, RECT *rect, UINT swp ) DECLSPEC_HIDDEN;
+extern LRESULT HAIKUDRV_SysCommand( HWND hwnd, WPARAM wparam, LPARAM lparam ) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_UpdateClipboard(void) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_UpdateLayeredWindow( HWND hwnd, const UPDATELAYEREDWINDOWINFO *info,
                                               const RECT *window_rect ) DECLSPEC_HIDDEN;
-extern LRESULT CDECL HAIKUDRV_WindowMessage( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_WindowPosChanging( HWND hwnd, HWND insert_after, UINT swp_flags,
+extern LRESULT HAIKUDRV_WindowMessage( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp ) DECLSPEC_HIDDEN;
+extern BOOL HAIKUDRV_WindowPosChanging( HWND hwnd, HWND insert_after, UINT swp_flags,
                                             const RECT *window_rect, const RECT *client_rect, RECT *visible_rect,
                                             struct window_surface **surface ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_WindowPosChanged( HWND hwnd, HWND insert_after, UINT swp_flags,
+extern void HAIKUDRV_WindowPosChanged( HWND hwnd, HWND insert_after, UINT swp_flags,
                                            const RECT *rectWindow, const RECT *rectClient,
                                            const RECT *visible_rect, const RECT *valid_rects,
                                            struct window_surface *surface ) DECLSPEC_HIDDEN;
-extern BOOL CDECL HAIKUDRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr_param,
+extern BOOL HAIKUDRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr_param,
                                                UINT flags ) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_ThreadDetach(void) DECLSPEC_HIDDEN;
+extern void HAIKUDRV_ThreadDetach(void) DECLSPEC_HIDDEN;
 
 /* X11 driver internal functions */
 
@@ -185,8 +185,8 @@ static inline void mirror_rect( const RECT *window_rect, RECT *rect )
 }
 
 extern void HAIKUDRV_InitClipboard(void) DECLSPEC_HIDDEN;
-extern void CDECL HAIKUDRV_SetFocus( HWND hwnd ) DECLSPEC_HIDDEN;
-extern DWORD CDECL HAIKUDRV_MsgWaitForMultipleObjectsEx( DWORD count, const HANDLE *handles, DWORD timeout,
+extern void HAIKUDRV_SetFocus( HWND hwnd ) DECLSPEC_HIDDEN;
+extern DWORD HAIKUDRV_MsgWaitForMultipleObjectsEx( DWORD count, const HANDLE *handles, DWORD timeout,
                                                        DWORD mask, DWORD flags ) DECLSPEC_HIDDEN;
 
 #define DEPTH_COUNT 3

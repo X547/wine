@@ -86,7 +86,7 @@ BOOL WINAPI DllMain( HINSTANCE hinst, DWORD reason, LPVOID reserved )
 /***********************************************************************
  *              SystemParametersInfo (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr_param, UINT flags )
+BOOL HAIKUDRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr_param, UINT flags )
 {
     return FALSE;  /* let user32 handle it */
 }
@@ -94,7 +94,7 @@ BOOL CDECL HAIKUDRV_SystemParametersInfo( UINT action, UINT int_param, void *ptr
 /**********************************************************************
  *           HAIKUDRV_D3DKMTSetVidPnSourceOwner
  */
-NTSTATUS CDECL HAIKUDRV_D3DKMTSetVidPnSourceOwner( const D3DKMT_SETVIDPNSOURCEOWNER *desc )
+NTSTATUS HAIKUDRV_D3DKMTSetVidPnSourceOwner( const D3DKMT_SETVIDPNSOURCEOWNER *desc )
 {
     NTSTATUS status = STATUS_SUCCESS;
     return status;
@@ -103,7 +103,7 @@ NTSTATUS CDECL HAIKUDRV_D3DKMTSetVidPnSourceOwner( const D3DKMT_SETVIDPNSOURCEOW
 /**********************************************************************
  *           HAIKUDRV_D3DKMTCheckVidPnExclusiveOwnership
  */
-NTSTATUS CDECL HAIKUDRV_D3DKMTCheckVidPnExclusiveOwnership( const D3DKMT_CHECKVIDPNEXCLUSIVEOWNERSHIP *desc )
+NTSTATUS HAIKUDRV_D3DKMTCheckVidPnExclusiveOwnership( const D3DKMT_CHECKVIDPNEXCLUSIVEOWNERSHIP *desc )
 {
     return STATUS_SUCCESS;
 }

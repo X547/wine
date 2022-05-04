@@ -50,7 +50,7 @@ WINE_DECLARE_DEBUG_CHANNEL(key);
 /***********************************************************************
  *		ActivateKeyboardLayout (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_ActivateKeyboardLayout(HKL hkl, UINT flags)
+BOOL HAIKUDRV_ActivateKeyboardLayout(HKL hkl, UINT flags)
 {
     return TRUE;
 }
@@ -61,7 +61,7 @@ BOOL CDECL HAIKUDRV_ActivateKeyboardLayout(HKL hkl, UINT flags)
  *
  * Note: Windows ignores HKL parameter and uses current active layout instead
  */
-SHORT CDECL HAIKUDRV_VkKeyScanEx(WCHAR wChar, HKL hkl)
+SHORT HAIKUDRV_VkKeyScanEx(WCHAR wChar, HKL hkl)
 {
     //FIXME("(%u): stub\n", wChar);
     return 0;
@@ -70,7 +70,7 @@ SHORT CDECL HAIKUDRV_VkKeyScanEx(WCHAR wChar, HKL hkl)
 /***********************************************************************
  *		MapVirtualKeyEx (HAIKUDRV.@)
  */
-UINT CDECL HAIKUDRV_MapVirtualKeyEx(UINT wCode, UINT wMapType, HKL hkl)
+UINT HAIKUDRV_MapVirtualKeyEx(UINT wCode, UINT wMapType, HKL hkl)
 {
     //FIXME("(%u): stub\n", wCode);
     return 0;
@@ -79,7 +79,7 @@ UINT CDECL HAIKUDRV_MapVirtualKeyEx(UINT wCode, UINT wMapType, HKL hkl)
 /***********************************************************************
  *		GetKeyNameText (HAIKUDRV.@)
  */
-INT CDECL HAIKUDRV_GetKeyNameText(LONG lParam, LPWSTR lpBuffer, INT nSize)
+INT HAIKUDRV_GetKeyNameText(LONG lParam, LPWSTR lpBuffer, INT nSize)
 {
   return 0;
 }
@@ -87,6 +87,6 @@ INT CDECL HAIKUDRV_GetKeyNameText(LONG lParam, LPWSTR lpBuffer, INT nSize)
 /***********************************************************************
  *		Beep (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_Beep(void)
+void HAIKUDRV_Beep(void)
 {
 }

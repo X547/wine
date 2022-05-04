@@ -49,21 +49,21 @@ WINE_DEFAULT_DEBUG_CHANNEL(cursor);
 /***********************************************************************
  *		DestroyCursorIcon (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_DestroyCursorIcon( HCURSOR handle )
+void HAIKUDRV_DestroyCursorIcon( HCURSOR handle )
 {
 }
 
 /***********************************************************************
  *		SetCursor (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_SetCursor( HCURSOR handle )
+void HAIKUDRV_SetCursor( HCURSOR handle )
 {
 }
 
 /***********************************************************************
  *		SetCursorPos (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_SetCursorPos( INT x, INT y )
+BOOL HAIKUDRV_SetCursorPos( INT x, INT y )
 {
 /*
 	ERR("(%d, %d)\n", x, y);
@@ -75,7 +75,7 @@ BOOL CDECL HAIKUDRV_SetCursorPos( INT x, INT y )
 /***********************************************************************
  *		GetCursorPos (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_GetCursorPos(LPPOINT pos)
+BOOL HAIKUDRV_GetCursorPos(LPPOINT pos)
 {
 /*
   ERR("()\n");
@@ -91,7 +91,7 @@ BOOL CDECL HAIKUDRV_GetCursorPos(LPPOINT pos)
 /***********************************************************************
  *		ClipCursor (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_ClipCursor( LPCRECT clip )
+BOOL HAIKUDRV_ClipCursor( LPCRECT clip )
 {
     return TRUE;
 }

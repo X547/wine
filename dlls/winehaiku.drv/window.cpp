@@ -578,19 +578,19 @@ static inline int get_dib_info_size(const BITMAPINFO *info, UINT coloruse)
 }
 
 
-static void CDECL haikudrv_surface_lock(struct window_surface *window_surface)
+static void haikudrv_surface_lock(struct window_surface *window_surface)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface(window_surface);
 	EnterCriticalSection(&surface->crit);
 }
 
-static void CDECL haikudrv_surface_unlock(struct window_surface *window_surface)
+static void haikudrv_surface_unlock(struct window_surface *window_surface)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface(window_surface);
 	LeaveCriticalSection(&surface->crit);
 }
 
-static void *CDECL haikudrv_surface_get_bitmap_info(struct window_surface *window_surface, BITMAPINFO *info)
+static void *haikudrv_surface_get_bitmap_info(struct window_surface *window_surface, BITMAPINFO *info)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface( window_surface );
 	
@@ -598,13 +598,13 @@ static void *CDECL haikudrv_surface_get_bitmap_info(struct window_surface *windo
 	return surface->bits;
 }
 
-static RECT *CDECL haikudrv_surface_get_bounds(struct window_surface *window_surface)
+static RECT *haikudrv_surface_get_bounds(struct window_surface *window_surface)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface(window_surface);
 	return &surface->bounds;
 }
 
-static void CDECL haikudrv_surface_set_region(struct window_surface *window_surface, HRGN region)
+static void haikudrv_surface_set_region(struct window_surface *window_surface, HRGN region)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface(window_surface);
 	
@@ -613,7 +613,7 @@ static void CDECL haikudrv_surface_set_region(struct window_surface *window_surf
 	window_surface->funcs->unlock(window_surface);
 }
 
-static void CDECL haikudrv_surface_flush(struct window_surface *window_surface)
+static void haikudrv_surface_flush(struct window_surface *window_surface)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface(window_surface);
 	
@@ -631,7 +631,7 @@ static void CDECL haikudrv_surface_flush(struct window_surface *window_surface)
 	window_surface->funcs->unlock(window_surface);
 }
 
-static void CDECL haikudrv_surface_destroy(struct window_surface *window_surface)
+static void haikudrv_surface_destroy(struct window_surface *window_surface)
 {
 	struct haikudrv_window_surface *surface = get_x11_surface( window_surface );
 	
@@ -697,7 +697,7 @@ failed:
 /***********************************************************************
  *           ThreadDetach (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_ThreadDetach(void)
+void HAIKUDRV_ThreadDetach(void)
 {
 #if 0
     struct haikudrv_thread_data *data = (struct haikudrv_thread_data*)TlsGetValue( thread_data_tls_index );
@@ -923,7 +923,7 @@ static void GetHaikuWindowFlags(
 /*****************************************************************
  *		SetWindowText   (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_SetWindowText( HWND hwnd, LPCWSTR text )
+void HAIKUDRV_SetWindowText( HWND hwnd, LPCWSTR text )
 {
 	UINT count;
 	char *utf8_buffer;
@@ -951,7 +951,7 @@ void CDECL HAIKUDRV_SetWindowText( HWND hwnd, LPCWSTR text )
  *
  * Update the X state of a window to reflect a style change
  */
-void CDECL HAIKUDRV_SetWindowStyle( HWND hwnd, INT offset, STYLESTRUCT *style )
+void HAIKUDRV_SetWindowStyle( HWND hwnd, INT offset, STYLESTRUCT *style )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 }
@@ -960,7 +960,7 @@ void CDECL HAIKUDRV_SetWindowStyle( HWND hwnd, INT offset, STYLESTRUCT *style )
 /***********************************************************************
  *		DestroyWindow   (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_DestroyWindow( HWND hwnd )
+void HAIKUDRV_DestroyWindow( HWND hwnd )
 {
 	//FIXME("(%ld): stub\n", (long)hwnd);
 	WineWindow *wnd = HaikuThisWindow(hwnd, false);
@@ -976,7 +976,7 @@ void CDECL HAIKUDRV_DestroyWindow( HWND hwnd )
 /**********************************************************************
  *		CreateDesktopWindow   (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_CreateDesktopWindow( HWND hwnd )
+BOOL HAIKUDRV_CreateDesktopWindow( HWND hwnd )
 {
 	//FIXME("(%ld): stub\n", (long)hwnd);
     RECT oldRect;
@@ -1020,7 +1020,7 @@ BOOL CDECL HAIKUDRV_CreateDesktopWindow( HWND hwnd )
 /**********************************************************************
  *		CreateWindow   (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_CreateWindow( HWND hwnd )
+BOOL HAIKUDRV_CreateWindow( HWND hwnd )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 	return TRUE;
@@ -1030,7 +1030,7 @@ BOOL CDECL HAIKUDRV_CreateWindow( HWND hwnd )
 /***********************************************************************
  *		HAIKUDRV_GetDC   (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_GetDC( HDC hdc, HWND hwnd, HWND top, const RECT *win_rect,
+void HAIKUDRV_GetDC( HDC hdc, HWND hwnd, HWND top, const RECT *win_rect,
                          const RECT *top_rect, DWORD flags )
 {
 	//FIXME("(%ld): stub\n", (long)hwnd);
@@ -1040,7 +1040,7 @@ void CDECL HAIKUDRV_GetDC( HDC hdc, HWND hwnd, HWND top, const RECT *win_rect,
 /***********************************************************************
  *		HAIKUDRV_ReleaseDC  (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_ReleaseDC( HWND hwnd, HDC hdc )
+void HAIKUDRV_ReleaseDC( HWND hwnd, HDC hdc )
 {
 	//FIXME("(%ld): stub\n", (long)hwnd);
 }
@@ -1049,7 +1049,7 @@ void CDECL HAIKUDRV_ReleaseDC( HWND hwnd, HDC hdc )
 /*************************************************************************
  *		ScrollDC   (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_ScrollDC( HDC hdc, INT dx, INT dy, HRGN update )
+BOOL HAIKUDRV_ScrollDC( HDC hdc, INT dx, INT dy, HRGN update )
 {
 	FIXME("(%ld): stub\n", (long)hdc);
 	return FALSE;
@@ -1059,7 +1059,7 @@ BOOL CDECL HAIKUDRV_ScrollDC( HDC hdc, INT dx, INT dy, HRGN update )
 /***********************************************************************
  *		SetCapture  (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_SetCapture( HWND hwnd, UINT flags )
+void HAIKUDRV_SetCapture( HWND hwnd, UINT flags )
 {
 	FIXME("(%ld, %x): stub\n", (long)hwnd, flags);
 	hwnd = GetAncestor(hwnd, GA_ROOT);
@@ -1083,7 +1083,7 @@ void CDECL HAIKUDRV_SetCapture( HWND hwnd, UINT flags )
 /*****************************************************************
  *		SetParent   (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_SetParent( HWND hwnd, HWND parent, HWND old_parent )
+void HAIKUDRV_SetParent( HWND hwnd, HWND parent, HWND old_parent )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 }
@@ -1092,7 +1092,7 @@ void CDECL HAIKUDRV_SetParent( HWND hwnd, HWND parent, HWND old_parent )
 /***********************************************************************
  *		WindowPosChanging   (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_WindowPosChanging( HWND hwnd, HWND insert_after, UINT swp_flags,
+BOOL HAIKUDRV_WindowPosChanging( HWND hwnd, HWND insert_after, UINT swp_flags,
                                      const RECT *window_rect, const RECT *client_rect, RECT *visible_rect,
                                      struct window_surface **surface )
 {
@@ -1150,7 +1150,7 @@ BOOL CDECL HAIKUDRV_WindowPosChanging( HWND hwnd, HWND insert_after, UINT swp_fl
 /***********************************************************************
  *		WindowPosChanged   (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_WindowPosChanged( HWND hwnd, HWND insert_after, UINT swp_flags,
+void HAIKUDRV_WindowPosChanged( HWND hwnd, HWND insert_after, UINT swp_flags,
                                     const RECT *rectWindow, const RECT *rectClient,
                                     const RECT *visible_rect, const RECT *valid_rects,
                                     struct window_surface *surface )
@@ -1207,7 +1207,7 @@ void CDECL HAIKUDRV_WindowPosChanged( HWND hwnd, HWND insert_after, UINT swp_fla
 /***********************************************************************
  *           ShowWindow   (HAIKUDRV.@)
  */
-UINT CDECL HAIKUDRV_ShowWindow( HWND hwnd, INT cmd, RECT *rect, UINT swp )
+UINT HAIKUDRV_ShowWindow( HWND hwnd, INT cmd, RECT *rect, UINT swp )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 	return swp;
@@ -1221,7 +1221,7 @@ UINT CDECL HAIKUDRV_ShowWindow( HWND hwnd, INT cmd, RECT *rect, UINT swp )
  * first time). Complete the X11 driver-specific initialisation
  * and set the window hints.
  */
-void CDECL HAIKUDRV_SetWindowIcon( HWND hwnd, UINT type, HICON icon )
+void HAIKUDRV_SetWindowIcon( HWND hwnd, UINT type, HICON icon )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 }
@@ -1232,7 +1232,7 @@ void CDECL HAIKUDRV_SetWindowIcon( HWND hwnd, UINT type, HICON icon )
  *
  * Assign specified region to window (for non-rectangular windows)
  */
-void CDECL HAIKUDRV_SetWindowRgn( HWND hwnd, HRGN hrgn, BOOL redraw )
+void HAIKUDRV_SetWindowRgn( HWND hwnd, HRGN hrgn, BOOL redraw )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 }
@@ -1243,7 +1243,7 @@ void CDECL HAIKUDRV_SetWindowRgn( HWND hwnd, HRGN hrgn, BOOL redraw )
  *
  * Set transparency attributes for a layered window.
  */
-void CDECL HAIKUDRV_SetLayeredWindowAttributes( HWND hwnd, COLORREF key, BYTE alpha, DWORD flags )
+void HAIKUDRV_SetLayeredWindowAttributes( HWND hwnd, COLORREF key, BYTE alpha, DWORD flags )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 }
@@ -1252,7 +1252,7 @@ void CDECL HAIKUDRV_SetLayeredWindowAttributes( HWND hwnd, COLORREF key, BYTE al
 /*****************************************************************************
  *              UpdateLayeredWindow  (HAIKUDRV.@)
  */
-BOOL CDECL HAIKUDRV_UpdateLayeredWindow( HWND hwnd, const UPDATELAYEREDWINDOWINFO *info,
+BOOL HAIKUDRV_UpdateLayeredWindow( HWND hwnd, const UPDATELAYEREDWINDOWINFO *info,
                                        const RECT *window_rect )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
@@ -1262,7 +1262,7 @@ BOOL CDECL HAIKUDRV_UpdateLayeredWindow( HWND hwnd, const UPDATELAYEREDWINDOWINF
 /**********************************************************************
  *           HAIKUDRV_WindowMessage   (HAIKUDRV.@)
  */
-LRESULT CDECL HAIKUDRV_WindowMessage( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
+LRESULT HAIKUDRV_WindowMessage( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 	return 0;
@@ -1273,7 +1273,7 @@ LRESULT CDECL HAIKUDRV_WindowMessage( HWND hwnd, UINT msg, WPARAM wp, LPARAM lp 
  *
  * Perform WM_SYSCOMMAND handling.
  */
-LRESULT CDECL HAIKUDRV_SysCommand( HWND hwnd, WPARAM wparam, LPARAM lparam )
+LRESULT HAIKUDRV_SysCommand( HWND hwnd, WPARAM wparam, LPARAM lparam )
 {
 	FIXME("(%ld): stub\n", (long)hwnd);
 	return -1;
@@ -1282,14 +1282,14 @@ LRESULT CDECL HAIKUDRV_SysCommand( HWND hwnd, WPARAM wparam, LPARAM lparam )
 /***********************************************************************
  *           HAIKUDRV_FlashWindowEx   (HAIKUDRV.@)
  */
-void CDECL HAIKUDRV_FlashWindowEx( PFLASHWINFO pfinfo )
+void HAIKUDRV_FlashWindowEx( PFLASHWINFO pfinfo )
 {
 }
 
 /***********************************************************************
  *           MsgWaitForMultipleObjectsEx   (HAIKUDRV.@)
  */
-DWORD CDECL HAIKUDRV_MsgWaitForMultipleObjectsEx( DWORD count, const HANDLE *handles,
+DWORD HAIKUDRV_MsgWaitForMultipleObjectsEx( DWORD count, const HANDLE *handles,
                                                 DWORD timeout, DWORD mask, DWORD flags )
 {
 	timeout = timeout < 1000 ? timeout : 1000;
@@ -1311,7 +1311,7 @@ DWORD CDECL HAIKUDRV_MsgWaitForMultipleObjectsEx( DWORD count, const HANDLE *han
  *
  * Set the X focus.
  */
-void CDECL HAIKUDRV_SetFocus( HWND hwnd )
+void HAIKUDRV_SetFocus( HWND hwnd )
 {
 	FIXME("(%ld)\n", (long)hwnd);
 	if (!(hwnd = GetAncestor(hwnd, GA_ROOT))) return;
@@ -1343,7 +1343,7 @@ void CDECL HAIKUDRV_SetFocus( HWND hwnd )
  * FIXME : should do the above (return 2 for non matching deadchar+char combinations)
  *
  */
-INT CDECL HAIKUDRV_ToUnicodeEx(UINT virtKey, UINT scanCode, const BYTE *lpKeyState,
+INT HAIKUDRV_ToUnicodeEx(UINT virtKey, UINT scanCode, const BYTE *lpKeyState,
                              LPWSTR bufW, int bufW_size, UINT flags, HKL hkl)
 {
     //FIXME("(%u): stub\n", virtKey);
