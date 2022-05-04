@@ -113,6 +113,7 @@ void     (WINAPI *pKiUserApcDispatcher)(CONTEXT*,ULONG_PTR,ULONG_PTR,ULONG_PTR,P
 void     (WINAPI *pKiUserCallbackDispatcher)(ULONG,void*,ULONG) = NULL;
 void     (WINAPI *pLdrInitializeThunk)(CONTEXT*,void**,ULONG_PTR,ULONG_PTR) = NULL;
 void     (WINAPI *pRtlUserThreadStart)( PRTL_THREAD_START_ROUTINE entry, void *arg ) = NULL;
+USHORT   (WINAPI *pRtlCaptureStackBackTrace)( ULONG skip, ULONG count, PVOID *buffer, ULONG *hash ) = NULL;
 void     (WINAPI *p__wine_ctrl_routine)(void*);
 SYSTEM_DLL_INIT_BLOCK *pLdrSystemDllInitBlock = NULL;
 
@@ -1058,6 +1059,7 @@ static void load_ntdll_functions( HMODULE module )
     GET_FUNC( LdrInitializeThunk );
     GET_FUNC( LdrSystemDllInitBlock );
     GET_FUNC( RtlUserThreadStart );
+    GET_FUNC( RtlCaptureStackBackTrace );
     GET_FUNC( __wine_ctrl_routine );
     GET_FUNC( __wine_set_unix_funcs );
     GET_FUNC( __wine_syscall_dispatcher );

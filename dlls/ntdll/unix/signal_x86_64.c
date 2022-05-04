@@ -2692,6 +2692,17 @@ static void segv_handler( int signal, siginfo_t *siginfo, void *sigcontext )
     printf("  FP: %#" PRIx64 "\n", RBP_sig(ucontext));
     printf("  address: %#" PRIx64 "\n", siginfo->si_addr);
     WriteModuleName(RIP_sig(ucontext));
+#if 0
+    printf("stack:\n");
+    void *frameIp;
+    for (
+        ULONG i = 0;
+        pRtlCaptureStackBackTrace(i, 1, &frameIp, NULL) == 1;
+        i++
+    ) {
+        printf("  %p\n", frameIp);
+    }
+#endif
     fgetc(stdin);
     //_exit(1);
 
