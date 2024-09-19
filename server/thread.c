@@ -51,6 +51,9 @@
 #include "user.h"
 #include "security.h"
 
+#ifdef __HAIKU__
+#undef HAVE_SCHED_SETAFFINITY
+#endif
 
 /* thread queues */
 

@@ -28,6 +28,9 @@
 #include <sys/resource.h>
 #endif
 #include <unistd.h>
+#ifdef __HAIKU__
+#define SIGIO SIGPOLL
+#endif
 
 #include "file.h"
 #include "object.h"
@@ -256,6 +259,7 @@ int watchdog_triggered(void)
 
 static int core_dump_disabled( void )
 {
+#if 0
     int r = 0;
 #ifdef RLIMIT_CORE
     struct rlimit lim;
@@ -263,6 +267,8 @@ static int core_dump_disabled( void )
     r = !getrlimit(RLIMIT_CORE, &lim) && (lim.rlim_cur == 0);
 #endif
     return r;
+#endif
+    return 0;
 }
 
 void init_signals(void)

@@ -1808,9 +1808,11 @@ static WCHAR* reg_get_valW(HKEY key, LPCWSTR subkey, LPCWSTR name)
 
 static HKEY open_associations_reg_key(void)
 {
+#ifndef __HAIKU__
     HKEY assocKey;
     if (RegCreateKeyW(HKEY_CURRENT_USER, L"Software\\Wine\\FileOpenAssociations", &assocKey) == ERROR_SUCCESS)
         return assocKey;
+#endif
     return NULL;
 }
 
@@ -2907,12 +2909,14 @@ int PASCAL wWinMain (HINSTANCE hInstance, HINSTANCE prev, LPWSTR cmdline, int sh
         token = next_token( &p );
 	if( !token )
 	    break;
+#ifndef __HAIKU__
         if( !wcscmp( token, L"-a" ) )
         {
             if (associations_enabled())
                 RefreshFileTypeAssociations();
             continue;
         }
+#endif
         if( !wcscmp( token, L"-r" ) )
         {
             cleanup_menus();

@@ -173,7 +173,9 @@ static NTSTATUS sock_errno_to_status( int err )
         case EDESTADDRREQ:      return STATUS_INVALID_CONNECTION;
         case EMSGSIZE:          return STATUS_BUFFER_OVERFLOW;
         case EPROTONOSUPPORT:
+#ifndef __HAIKU__
         case ESOCKTNOSUPPORT:
+#endif
         case EPFNOSUPPORT:
         case EAFNOSUPPORT:
         case EPROTOTYPE:        return STATUS_NOT_SUPPORTED;
@@ -737,6 +739,7 @@ static NTSTATUS try_recv( int fd, struct async_recv_ioctl *async, ULONG_PTR *siz
         if ((async->unix_flags & MSG_OOB) && errno == EINVAL)
             errno = EWOULDBLOCK;
 
+        // warn:winsock:try_recv recvmsg: Operation not supported
         if (errno != EWOULDBLOCK) WARN( "recvmsg: %s\n", strerror( errno ) );
         return sock_errno_to_status( errno );
     }
@@ -1833,7 +1836,9 @@ NTSTATUS sock_ioctl( HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, void *apc
             }
             else
             {
+#ifdef __HAIKU__
                 if (ioctl( fd, SIOCATMARK, &value ) < 0)
+#endif
                 {
                     status = sock_errno_to_status( errno );
                     break;
@@ -2565,7 +2570,7 @@ NTSTATUS sock_ioctl( HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, void *apc
         case IOCTL_AFD_WINE_SET_TCP_KEEPALIVE:
             return do_setsockopt( handle, io, IPPROTO_TCP, TCP_KEEPALIVE, in_buffer, in_size );
 #endif
-
+#ifndef __HAIKU__
         case IOCTL_AFD_WINE_GET_TCP_KEEPINTVL:
             return do_getsockopt( handle, io, IPPROTO_TCP, TCP_KEEPINTVL, out_buffer, out_size );
 
@@ -2577,7 +2582,7 @@ NTSTATUS sock_ioctl( HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, void *apc
 
         case IOCTL_AFD_WINE_SET_TCP_KEEPCNT:
             return do_setsockopt( handle, io, IPPROTO_TCP, TCP_KEEPCNT, in_buffer, in_size );
-
+#endif
         default:
         {
             if ((code >> 16) == FILE_DEVICE_NETWORK)

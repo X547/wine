@@ -70,7 +70,7 @@ static inline data_size_t wine_server_reply_size( const void *reply )
 /* add some data to be sent along with the request */
 static inline void wine_server_add_data( void *req_ptr, const void *ptr, data_size_t size )
 {
-    struct __server_request_info * const req = req_ptr;
+    struct __server_request_info * const req = (struct __server_request_info * const)req_ptr;
     if (size)
     {
         req->data[req->data_count].ptr = ptr;
@@ -82,7 +82,7 @@ static inline void wine_server_add_data( void *req_ptr, const void *ptr, data_si
 /* set the pointer and max size for the reply var data */
 static inline void wine_server_set_reply( void *req_ptr, void *ptr, data_size_t max_size )
 {
-    struct __server_request_info * const req = req_ptr;
+    struct __server_request_info * const req = (struct __server_request_info * const)req_ptr;
     req->reply_data = ptr;
     req->u.req.request_header.reply_size = max_size;
 }

@@ -64,6 +64,19 @@
 #ifdef __APPLE__
 # include <mach/mach.h>
 #endif
+#ifdef __HAIKU__
+# include <SupportDefs.h>
+#if 0
+# include <private/system/syscalls.h>
+# include <private/system/arch/x86/arch_thread_defs.h>
+#else
+#define THREAD_SYSCALLS			"thread"
+#define THREAD_SET_GS_BASE		1
+
+extern status_t		_kern_generic_syscall(const char *subsystem, uint32 function,
+						void *buffer, size_t bufferSize);
+#endif
+#endif
 
 #include "ntstatus.h"
 #define WIN32_NO_STATUS
@@ -290,6 +303,34 @@ static inline XMM_SAVE_AREA32 *FPU_sig( const ucontext_t *context )
     return (XMM_SAVE_AREA32 *)&(context)->uc_mcontext->__fs.__fpu_fcw;
 }
 
+#define XState_sig(context)  NULL
+
+#elif defined (__HAIKU__)
+
+#define RAX_sig(context)     ((context)->uc_mcontext.rax)
+#define RBX_sig(context)     ((context)->uc_mcontext.rbx)
+#define RCX_sig(context)     ((context)->uc_mcontext.rcx)
+#define RDX_sig(context)     ((context)->uc_mcontext.rdx)
+#define RSI_sig(context)     ((context)->uc_mcontext.rsi)
+#define RDI_sig(context)     ((context)->uc_mcontext.rdi)
+#define RBP_sig(context)     ((context)->uc_mcontext.rbp)
+#define R8_sig(context)      ((context)->uc_mcontext.r8)
+#define R9_sig(context)      ((context)->uc_mcontext.r9)
+#define R10_sig(context)     ((context)->uc_mcontext.r10)
+#define R11_sig(context)     ((context)->uc_mcontext.r11)
+#define R12_sig(context)     ((context)->uc_mcontext.r12)
+#define R13_sig(context)     ((context)->uc_mcontext.r13)
+#define R14_sig(context)     ((context)->uc_mcontext.r14)
+#define R15_sig(context)     ((context)->uc_mcontext.r15)
+#define CS_sig(context)      cs64_sel
+#define FS_sig(context)      NULL
+#define GS_sig(context)      NULL
+#define EFL_sig(context)     ((context)->uc_mcontext.rflags)
+#define RIP_sig(context)     ((context)->uc_mcontext.rip)
+#define RSP_sig(context)     ((context)->uc_mcontext.rsp)
+#define TRAP_sig(context)    TRAP_x86_PAGEFLT
+#define ERROR_sig(context)   0
+#define FPU_sig(context)     ((XMM_SAVE_AREA32 *)&(context)->uc_mcontext.fpu)
 #define XState_sig(context)  NULL
 
 #else
@@ -829,9 +870,11 @@ static inline void set_sigcontext( const CONTEXT *context, ucontext_t *sigcontex
     R14_sig(sigcontext) = context->R14;
     R15_sig(sigcontext) = context->R15;
     RIP_sig(sigcontext) = context->Rip;
+#ifndef __HAIKU__
     CS_sig(sigcontext)  = context->SegCs;
     FS_sig(sigcontext)  = context->SegFs;
     EFL_sig(sigcontext) = context->EFlags;
+#endif
 }
 
 
@@ -1479,7 +1522,9 @@ static void setup_raise_exception( ucontext_t *sigcontext, EXCEPTION_RECORD *rec
         context_init_xstate( &stack->context, NULL );
     }
 
+#ifndef __HAIKU__
     CS_sig(sigcontext)  = cs64_sel;
+#endif
     RIP_sig(sigcontext) = (ULONG_PTR)pKiUserExceptionDispatcher;
     RSP_sig(sigcontext) = (ULONG_PTR)stack;
     /* clear single-step, direction, and align check flag */
@@ -1966,6 +2011,46 @@ static BOOL handle_syscall_trap( ucontext_t *sigcontext, siginfo_t *siginfo )
     return TRUE;
 }
 
+
+NTSTATUS static LdrFindEntryForAddress2( const void *addr, PLDR_DATA_TABLE_ENTRY *pmod )
+{
+    PLIST_ENTRY mark, entry;
+    PLDR_DATA_TABLE_ENTRY mod;
+
+    mark = &NtCurrentTeb()->Peb->LdrData->InMemoryOrderModuleList;
+    for (entry = mark->Flink; entry != mark; entry = entry->Flink)
+    {
+        mod = CONTAINING_RECORD(entry, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
+        if (mod->DllBase <= addr &&
+            (const char *)addr < (char*)mod->DllBase + mod->SizeOfImage)
+        {
+            *pmod = mod;
+            return STATUS_SUCCESS;
+        }
+    }
+    return STATUS_NO_MORE_ENTRIES;
+}
+
+static void WriteRtlString(UNICODE_STRING str)
+{
+	for (int i = 0; i < str.Length; i++) {
+		printf("%c", str.Buffer[i]);
+	}
+}
+
+static void WriteModuleName(addr_t address)
+{
+	HMODULE hModule = NULL;
+	PLDR_DATA_TABLE_ENTRY pmod = NULL;
+	LdrFindEntryForAddress2(
+		(void*)address,
+		&pmod
+	);
+	hModule = pmod == NULL ? NULL : pmod->DllBase;
+	printf("  hModule: %p\n", hModule);
+	if (hModule != NULL)
+	printf("  BaseDllName: %s\n", debugstr_w(pmod->BaseDllName.Buffer)); printf("\n");
+}
 
 /**********************************************************************
  *		segv_handler
@@ -2572,6 +2657,8 @@ void call_init_thunk( LPTHREAD_START_ROUTINE entry, void *arg, BOOL suspend, TEB
        thread's gsbase.  Have each thread record its gsbase pointer into its
        TEB so alloc_tls_slot() can find it. */
     teb->Instrumentation[0] = thread_data->pthread_teb;
+#elif defined (__HAIKU__)
+    _kern_generic_syscall(THREAD_SYSCALLS, THREAD_SET_GS_BASE, &teb, sizeof(teb));
 #else
 # error Please define setting %gs for your architecture
 #endif

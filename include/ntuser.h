@@ -642,7 +642,7 @@ W32KAPI BOOL    WINAPI NtUserEnumDisplaySettings( UNICODE_STRING *device, DWORD 
 W32KAPI INT     WINAPI NtUserExcludeUpdateRgn( HDC hdc, HWND hwnd );
 W32KAPI HICON   WINAPI NtUserFindExistingCursorIcon( UNICODE_STRING *module, UNICODE_STRING *res_name,
                                                      void *desc );
-W32KAPI HWND    WINAPI NtUserFindWindowEx( HWND parent, HWND child, UNICODE_STRING *class,
+W32KAPI HWND    WINAPI NtUserFindWindowEx( HWND parent, HWND child, UNICODE_STRING *classname,
                                            UNICODE_STRING *title, ULONG unk );
 W32KAPI BOOL    WINAPI NtUserFlashWindowEx( FLASHWINFO *info );
 W32KAPI HWND    WINAPI NtUserGetAncestor( HWND hwnd, UINT type );
@@ -865,7 +865,7 @@ static inline BOOL NtUserDestroyCaret(void)
 
 static inline HWND NtUserGetDesktopWindow(void)
 {
-    return UlongToHandle( NtUserCallNoParam( NtUserCallNoParam_GetDesktopWindow ));
+    return (HWND)UlongToHandle( NtUserCallNoParam( NtUserCallNoParam_GetDesktopWindow ));
 }
 
 static inline DWORD NtUserGetDialogBaseUnits(void)
@@ -942,12 +942,12 @@ static inline HDWP NtUserBeginDeferWindowPos( INT count )
 
 static inline HICON NtUserCreateCursorIcon( BOOL is_icon )
 {
-    return UlongToHandle( NtUserCallOneParam( is_icon, NtUserCallOneParam_CreateCursorIcon ));
+    return (HICON)UlongToHandle( NtUserCallOneParam( is_icon, NtUserCallOneParam_CreateCursorIcon ));
 }
 
 static inline HMENU NtUserCreateMenu( BOOL is_popup )
 {
-    return UlongToHandle( NtUserCallOneParam( is_popup, NtUserCallOneParam_CreateMenu ));
+    return (HMENU)UlongToHandle( NtUserCallOneParam( is_popup, NtUserCallOneParam_CreateMenu ));
 }
 
 static inline WORD NtUserEnableDC( HDC hdc )
@@ -1011,12 +1011,12 @@ static inline COLORREF NtUserGetSysColor( INT index )
 
 static inline HBRUSH NtUserGetSysColorBrush( INT index )
 {
-    return UlongToHandle( NtUserCallOneParam( index, NtUserCallOneParam_GetSysColorBrush ));
+    return (HBRUSH)UlongToHandle( NtUserCallOneParam( index, NtUserCallOneParam_GetSysColorBrush ));
 }
 
 static inline HPEN NtUserGetSysColorPen( INT index )
 {
-    return UlongToHandle( NtUserCallOneParam( index, NtUserCallOneParam_GetSysColorPen ));
+    return (HPEN)UlongToHandle( NtUserCallOneParam( index, NtUserCallOneParam_GetSysColorPen ));
 }
 
 static inline INT NtUserGetSystemMetrics( INT index )
@@ -1104,7 +1104,7 @@ static inline INT NtUserGetSystemMetricsForDpi( INT index, UINT dpi )
 static inline HMONITOR NtUserMonitorFromRect( const RECT *rect, DWORD flags )
 {
     ULONG ret = NtUserCallTwoParam( (LONG_PTR)rect, flags, NtUserCallTwoParam_MonitorFromRect );
-    return UlongToHandle( ret );
+    return (HMONITOR)UlongToHandle( ret );
 }
 
 static inline BOOL NtUserSetCaretPos( int x, int y )
@@ -1227,7 +1227,7 @@ static inline void *NtUserGetMDIClientInfo( HWND hwnd )
 
 static inline HWND NtUserGetParent( HWND hwnd )
 {
-    return UlongToHandle( NtUserCallHwnd( hwnd, NtUserCallHwnd_GetParent ));
+    return (HWND)UlongToHandle( NtUserCallHwnd( hwnd, NtUserCallHwnd_GetParent ));
 }
 
 static inline UINT NtUserGetWindowDpiAwarenessContext( HWND hwnd )
@@ -1421,7 +1421,7 @@ static inline BOOL NtUserGetWindowRect( HWND hwnd, RECT *rect, UINT dpi )
 
 static inline HWND NtUserGetWindowRelative( HWND hwnd, UINT rel )
 {
-    return UlongToHandle( NtUserCallHwndParam( hwnd, rel,
+    return (HWND)UlongToHandle( NtUserCallHwndParam( hwnd, rel,
                                                NtUserCallHwndParam_GetWindowRelative ));
 }
 
@@ -1472,7 +1472,7 @@ static inline BOOL NtUserMirrorRgn( HWND hwnd, HRGN hrgn )
 static inline HMONITOR NtUserMonitorFromWindow( HWND hwnd, DWORD flags )
 {
     ULONG ret = NtUserCallHwndParam(  hwnd, flags, NtUserCallHwndParam_MonitorFromWindow );
-    return UlongToHandle( ret );
+    return (HMONITOR)UlongToHandle( ret );
 }
 
 static inline BOOL NtUserScreenToClient( HWND hwnd, POINT *pt )

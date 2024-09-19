@@ -70,6 +70,9 @@
 #define _POSIX_SPAWN_DISABLE_ASLR 0x0100
 #endif
 #endif
+#ifdef __HAIKU__
+#define SIGIO SIGPOLL
+#endif
 
 #include "ntstatus.h"
 #define WIN32_NO_STATUS

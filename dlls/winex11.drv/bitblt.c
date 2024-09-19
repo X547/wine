@@ -45,6 +45,8 @@
 #  include <sys/ipc.h>
 # endif
 #endif
+#undef HAVE_LIBXXSHM
+#undef HAVE_LIBXSHAPE
 
 #include "x11drv.h"
 #include "winternl.h"

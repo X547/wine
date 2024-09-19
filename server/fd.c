@@ -86,6 +86,9 @@
 #ifdef HAVE_SYS_SYSCALL_H
 #include <sys/syscall.h>
 #endif
+#ifdef __HAIKU__
+#undef ioctl
+#endif
 
 #include "ntstatus.h"
 #define WIN32_NO_STATUS
@@ -959,6 +962,7 @@ void main_loop(void)
 
         if (!active_users) break;  /* last user removed by a timeout */
 
+        //printf("poll(%d, %d), active_users: %d\n", nb_users, timeout, active_users);
         ret = poll( pollfd, nb_users, timeout );
         set_current_time();
 

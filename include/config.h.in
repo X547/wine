@@ -216,6 +216,9 @@
 /* Define to 1 if you have the <machine/sysarch.h> header file. */
 #undef HAVE_MACHINE_SYSARCH_H
 
+/* Define to 1 if you have the 'mach_continuous_time' function. */
+#undef HAVE_MACH_CONTINUOUS_TIME
+
 /* Define to 1 if you have the <mach/mach.h> header file. */
 #undef HAVE_MACH_MACH_H
 
@@ -803,6 +806,9 @@
 
 /* Define to the soname of the libXxf86vm library. */
 #undef SONAME_LIBXXF86VM
+
+/* Define to 1 if the 'S_IS*' macros in <sys/stat.h> do not work properly. */
+#undef STAT_MACROS_BROKEN
 
 /* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for

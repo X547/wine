@@ -26,7 +26,8 @@
 #include "config.h"
 #include <stdlib.h>
 
-#include <linux/input.h>
+//#include <linux/input.h>
+#include "input-event-codes.h"
 #undef SW_MAX /* Also defined in winuser.rh */
 #include <sys/mman.h>
 #include <unistd.h>
