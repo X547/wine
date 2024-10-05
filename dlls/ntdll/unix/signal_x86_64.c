@@ -323,8 +323,8 @@ static inline XMM_SAVE_AREA32 *FPU_sig( const ucontext_t *context )
 #define R14_sig(context)     ((context)->uc_mcontext.r14)
 #define R15_sig(context)     ((context)->uc_mcontext.r15)
 #define CS_sig(context)      cs64_sel
-#define FS_sig(context)      NULL
-#define GS_sig(context)      NULL
+#define FS_sig(context)      0
+#define GS_sig(context)      0
 #define EFL_sig(context)     ((context)->uc_mcontext.rflags)
 #define RIP_sig(context)     ((context)->uc_mcontext.rip)
 #define RSP_sig(context)     ((context)->uc_mcontext.rsp)

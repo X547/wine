@@ -408,11 +408,11 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
     void *ptr;
 
 #ifdef MAP_FIXED_NOREPLACE
-    ptr = mmap( start, size, prot, MAP_FIXED_NOREPLACE | MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
+    ptr = mmap( start, size, prot, MAP_FIXED_NOREPLACE | MAP_PRIVATE | MAP_ANON | MAP_NORESERVE | flags, -1, 0 );
 #elif defined(MAP_TRYFIXED)
-    ptr = mmap( start, size, prot, MAP_TRYFIXED | MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
+    ptr = mmap( start, size, prot, MAP_TRYFIXED | MAP_PRIVATE | MAP_ANON | MAP_NORESERVE | flags, -1, 0 );
 #elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
-    ptr = mmap( start, size, prot, MAP_FIXED | MAP_EXCL | MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
+    ptr = mmap( start, size, prot, MAP_FIXED | MAP_EXCL | MAP_PRIVATE | MAP_ANON | MAP_NORESERVE | flags, -1, 0 );
     if (ptr == MAP_FAILED && errno == EINVAL) errno = EEXIST;
 #elif defined(__APPLE__)
     mach_vm_address_t result = (mach_vm_address_t)start;
@@ -430,7 +430,7 @@ static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
         ptr = MAP_FAILED;
     }
 #else
-    ptr = mmap( start, size, prot, MAP_PRIVATE | MAP_ANON | flags, -1, 0 );
+    ptr = mmap( start, size, prot, MAP_PRIVATE | MAP_ANON | MAP_NORESERVE | flags, -1, 0 );
 #endif
     if (ptr != MAP_FAILED && ptr != start)
     {
