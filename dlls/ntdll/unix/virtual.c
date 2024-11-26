@@ -403,11 +403,41 @@ static size_t unmap_area_above_user_limit( void *addr, size_t size )
 }
 
 
+#ifdef __HAIKU__
+#define B_OVERCOMMITTING_AREA	(1 << 12)
+
+enum {
+	REGION_NO_PRIVATE_MAP = 0,
+	REGION_PRIVATE_MAP
+};
+
+extern area_id		_kern_map_file(const char *name, void **address,
+						uint32 addressSpec, size_t size, uint32 protection,
+						uint32 mapping, bool unmapAddressRange, int fd,
+						off_t offset);
+#endif
+
+
 static void *anon_mmap_tryfixed( void *start, size_t size, int prot, int flags )
 {
     void *ptr;
 
-#ifdef MAP_FIXED_NOREPLACE
+#ifdef __HAIKU__
+	uint32 areaProtection = B_OVERCOMMITTING_AREA;
+	if ((prot & PROT_READ) != 0)
+		areaProtection |= B_READ_AREA;
+	if ((prot & PROT_WRITE) != 0)
+		areaProtection |= B_WRITE_AREA;
+	if ((prot & PROT_EXEC) != 0)
+		areaProtection |= B_EXECUTE_AREA;
+
+    ptr = start;
+    area_id area = _kern_map_file("wine", &ptr, B_EXACT_ADDRESS, size, areaProtection, REGION_PRIVATE_MAP, false, -1, 0);
+    if (area < B_OK) {
+        ptr = MAP_FAILED;
+        errno = area;
+    }
+#elif MAP_FIXED_NOREPLACE
     ptr = mmap( start, size, prot, MAP_FIXED_NOREPLACE | MAP_PRIVATE | MAP_ANON | MAP_NORESERVE | flags, -1, 0 );
 #elif defined(MAP_TRYFIXED)
     ptr = mmap( start, size, prot, MAP_TRYFIXED | MAP_PRIVATE | MAP_ANON | MAP_NORESERVE | flags, -1, 0 );

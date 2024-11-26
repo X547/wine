@@ -66,6 +66,9 @@
 # include <linux/irda.h>
 # define HAS_IRDA
 #endif
+#ifdef __HAIKU__
+# include <sys/sockio.h>
+#endif
 
 #include "ntstatus.h"
 #define WIN32_NO_STATUS
@@ -1836,9 +1839,7 @@ NTSTATUS sock_ioctl( HANDLE handle, HANDLE event, PIO_APC_ROUTINE apc, void *apc
             }
             else
             {
-#ifdef __HAIKU__
                 if (ioctl( fd, SIOCATMARK, &value ) < 0)
-#endif
                 {
                     status = sock_errno_to_status( errno );
                     break;
